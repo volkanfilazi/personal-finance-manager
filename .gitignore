@@ -1,0 +1,20 @@
+# Frontend
+node_modules/
+.angular/
+dist/
+
+# Backend
+bin/
+obj/
+.vs/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
