@@ -11,13 +11,26 @@ describe('Category dialog flow', () => {
   const category: Category = { id: '1', name: 'Food', type: 'Expense' };
   let fixture: ComponentFixture<CategoryList>;
   let request: Subject<Category>;
-  let service: { getAll: ReturnType<typeof vi.fn>; create: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> };
+  let service: {
+    getAll: ReturnType<typeof vi.fn>;
+    create: ReturnType<typeof vi.fn>;
+    update: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
-    // jsdom does not implement the native modal lifecycle.
     Object.defineProperties(HTMLDialogElement.prototype, {
-      showModal: { configurable: true, value() { this.open = true; } },
-      close: { configurable: true, value() { this.open = false; } },
+      showModal: {
+        configurable: true,
+        value() {
+          this.open = true;
+        },
+      },
+      close: {
+        configurable: true,
+        value() {
+          this.open = false;
+        },
+      },
     });
     request = new Subject<Category>();
     service = {
@@ -34,8 +47,9 @@ describe('Category dialog flow', () => {
   });
 
   function dialog(title: string): HTMLDialogElement {
-    return Array.from(fixture.nativeElement.querySelectorAll('dialog') as NodeListOf<HTMLDialogElement>)
-      .find(element => element.querySelector('h2')?.textContent?.trim() === title)!;
+    return Array.from(
+      fixture.nativeElement.querySelectorAll('dialog') as NodeListOf<HTMLDialogElement>,
+    ).find((element) => element.querySelector('h2')?.textContent?.trim() === title)!;
   }
 
   async function click(element: HTMLElement) {
@@ -44,8 +58,9 @@ describe('Category dialog flow', () => {
   }
 
   async function confirmationAction(label: string) {
-    const button = Array.from(dialog('Confirmation Dialog').querySelectorAll('button'))
-      .find(element => element.textContent?.trim() === label)!;
+    const button = Array.from(dialog('Confirmation Dialog').querySelectorAll('button')).find(
+      (element) => element.textContent?.trim() === label,
+    )!;
     await click(button);
   }
 
@@ -62,14 +77,17 @@ describe('Category dialog flow', () => {
       const original = mode === 'create' ? '' : category.name;
 
       async function open() {
-        await click(fixture.nativeElement.querySelector(
-          mode === 'create' ? 'main > header button' : 'app-icon-button[icon="edit"]',
-        ));
+        await click(
+          fixture.nativeElement.querySelector(
+            mode === 'create' ? 'main > header button' : 'app-icon-button[icon="edit"]',
+          ),
+        );
         return dialog(title);
       }
 
       function form(): CategoryForm {
-        return fixture.debugElement.queryAll(By.directive(CategoryForm))[mode === 'create' ? 0 : 1].componentInstance;
+        return fixture.debugElement.queryAll(By.directive(CategoryForm))[mode === 'create' ? 0 : 1]
+          .componentInstance;
       }
 
       it('saves from confirmation and closes only after success', async () => {
@@ -151,4 +169,3 @@ describe('Category dialog flow', () => {
     expect(modal.querySelector('input')!.value).toBe('Travel');
   });
 });
-
