@@ -1,0 +1,88 @@
+<main>
+  <header class="d-flex flex-row">
+    <h1>categories</h1>
+    <button type="button" class="btn btn-primary" (click)="categoryDialog.open()">
+      Add category
+    </button>
+  </header>
+  @for (category of categories(); track category.id) {
+    <div class="d-flex flex-row align-items-center justify-content-between">
+      <div>{{ category.name }} - {{ category.type }}</div>
+      <div class="actions">
+        <app-icon-button
+          icon="edit"
+          label="Edit category"
+          (click)="openEditDialog(category, editDialog)"
+        />
+        <app-icon-button
+          icon="delete"
+          label="Delete category"
+          (click)="openDeleteDialog(category, deleteDialog)"
+        />
+        @if (responseError()) {
+          <p>{{ this.responseError() }}</p>
+        }
+      </div>
+    </div>
+  }
+  <app-dialog #deleteDialog title="Delete category">
+    <p>
+      Are you sure you want to delete
+      <strong>{{ selectedCategory()?.name }}</strong
+      >?
+    </p>
+    <p class="text-muted">This action cannot be undone.</p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-light" (click)="deleteDialog.close()">Cancel</button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        [disabled]="deleting()"
+        (click)="confirmDelete()"
+      >
+        @if (deleting()) {
+          <span class="spinner-border spinner-border-sm me-2"></span>
+          Deleting...
+        } @else {
+          Delete
+        }
+      </button>
+    </div>
+  </app-dialog>
+
+  <app-dialog
+    #categoryDialog
+    title="Create category"
+    [hasChanges]="createForm.hasChanges() || createForm.loading()"
+    (closeBlocked)="openConfirmation('create')"
+    (closed)="onFormClosed('create')"
+  >
+    <app-category-form
+      #createForm
+      (saved)="onCategorySaved(categoryDialog)"
+    />
+  </app-dialog>
+
+  <app-dialog
+    #editDialog
+    title="Edit category"
+    [hasChanges]="editForm.hasChanges() || editForm.loading()"
+    (closeBlocked)="openConfirmation('edit')"
+    (closed)="onFormClosed('edit')"
+  >
+    <app-category-form
+      #editForm
+      [updateForm]="selectedCategory()"
+      (saved)="onCategorySaved(editDialog)"
+    />
+  </app-dialog>
+
+  <app-dialog #confirmationDialog title="Confirmation Dialog">
+    <p>Would you like to save your changes before leave?</p>
+    <div class="dialog-actions justify-content-end d-flex flex-row gap-1">
+      <button type="button" class="btn" (click)="confirmationDialog.close()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveChanges()">Save</button>
+      <button type="button" class="btn btn-danger" (click)="discardChanges()">Discard</button>
+    </div>
+  </app-dialog>
+</main>

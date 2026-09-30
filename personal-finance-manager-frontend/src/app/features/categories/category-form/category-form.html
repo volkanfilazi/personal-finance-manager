@@ -1,0 +1,51 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <fieldset [disabled]="loading()" class="border-0 p-0">
+    <div class="form-field">
+      <label for="category-name" class="form-label"> Name </label>
+
+      <input id="category-name" type="text" class="form-control" formControlName="name" />
+
+      <div class="field-error">
+        @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+          Name is required.
+        } @else if (form.controls.name.touched && form.controls.name.hasError('maxlength')) {
+          Maximum 50 characters.
+        }
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="category-type" class="form-label"> Type </label>
+
+      <select id="category-type" class="form-select" formControlName="type">
+        <option value="Income">Income</option>
+        <option value="Expense">Expense</option>
+      </select>
+
+      <div class="field-error"></div>
+    </div>
+
+    <div class="response-error">
+      {{ responseError() }}
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="form.invalid || loading() || !hasChanges()"
+      >
+        @if (loading()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Saving...
+        } @else {
+          @if (this.updateForm()) {
+            Save
+          } @else {
+            Add category
+          }
+        }
+      </button>
+    </div>
+  </fieldset>
+</form>

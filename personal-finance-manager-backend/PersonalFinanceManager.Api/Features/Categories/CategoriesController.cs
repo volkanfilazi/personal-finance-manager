@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PersonalFinanceManager.Api.Infrastructure.Http;
 
 namespace PersonalFinanceManager.Api.Features.Categories;
 
@@ -22,7 +23,15 @@ public class CategoriesController : ControllerBase
             Type = dto.Type
         };
 
-        await _categoryService.CreateAsync(category);
+        var result = await _categoryService.CreateAsync(category);
+
+        if (result.Status == CreateCategoryStatus.Duplicate)
+        {
+            return Conflict(new ApiError(
+                ApiErrorCodes.CategoryAlreadyExists,
+                "A category with this name already exists."
+                ));
+        }
 
         var response = new CategoryDto
         {
@@ -100,7 +109,10 @@ public class CategoriesController : ControllerBase
 
         if (!deleted)
         {
-            return NotFound();
+            return NotFound(new ApiError(
+                ApiErrorCodes.CategoryNotFound,
+                "Category not found."
+            ));
         }
 
         return NoContent();
