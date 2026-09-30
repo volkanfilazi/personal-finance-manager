@@ -11,11 +11,27 @@ public class CategoryService
         _categories = database.GetCollection<Category>("categories");
     }
 
-    public async Task<Category> CreateAsync(Category category)
+    public async Task<CreateCategoryResult> CreateAsync(Category category)
     {
+        var exist = await _categories
+            .Find(x => x.Name == category.Name)
+            .AnyAsync();
+
+        if (exist)
+        {
+            return new CreateCategoryResult
+            {
+                Status = CreateCategoryStatus.Duplicate
+            };
+        }
+
         await _categories.InsertOneAsync(category);
 
-        return category;
+        return new CreateCategoryResult
+        {
+            Status = CreateCategoryStatus.Created,
+            Category = category
+        };
     }
 
     public async Task<Category?> GetByIdAsync(string id)
