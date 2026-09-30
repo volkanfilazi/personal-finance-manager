@@ -1,0 +1,15 @@
+<dialog #dialog (cancel)="$event.preventDefault(); close()">
+  <div class="dialog-container">
+    <header class="dialog-header">
+      <h2>{{ title() }}</h2>
+
+      <button type="button" class="dialog-close" aria-label="Close" (click)="close()">
+        &times;
+      </button>
+    </header>
+
+    <div class="dialog-body">
+      <ng-content />
+    </div>
+  </div>
+</dialog>
