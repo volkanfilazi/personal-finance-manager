@@ -261,7 +261,7 @@ describe('Transaction create and edit', () => {
     );
     expect(table.textContent).toContain(transaction.description);
     service.getAll.mockReturnValue(of([transaction]));
-    table.querySelector<HTMLButtonElement>('.btn-outline-primary')!.click();
+    table.querySelector<HTMLButtonElement>('app-text-button button')!.click();
     await fixture.whenStable();
     expect(table.querySelector('[role="alert"]')).toBeNull();
     expect(table.textContent).toContain(transaction.description);

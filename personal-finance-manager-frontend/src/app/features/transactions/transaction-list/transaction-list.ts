@@ -1,21 +1,33 @@
-import { Component, DestroyRef, inject, input, OnInit, signal, viewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  OnChanges,
+  SimpleChanges,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize, Subscription } from 'rxjs';
 import { TransactionService } from '../transaction.service';
-import { Transaction } from '../transaction.model';
+import { Transaction, TransactionTotalsState } from '../transaction.model';
 import { DatePipe } from '@angular/common';
 import { Dialog } from '../../../shared/dialogs/dialog/dialog';
 import { TransactionForm } from '../transaction-form/transaction-form';
-import { Category } from '../../categories/category.model';
+import { Category, CategoryType } from '../../categories/category.model';
 import { DeleteConfirmationDialog } from '../../../shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog';
-import { IconButton } from '../../../shared/icon-button/icon-button';
+import { IconButton } from '../../../shared/buttons/icon-button/icon-button';
 import { SaveChangesDialog } from '../../../shared/dialogs/save-changes-dialog/save-changes-dialog';
 import { ApiError } from '../../../core/api/api-error.model';
+import { TextButton } from '../../../shared/buttons/text-button/text-button';
 
 @Component({
   selector: 'app-transaction-list',
   templateUrl: './transaction-list.html',
+  styleUrl: './transaction-list.scss',
   imports: [
     DatePipe,
     Dialog,
@@ -23,11 +35,14 @@ import { ApiError } from '../../../core/api/api-error.model';
     IconButton,
     SaveChangesDialog,
     DeleteConfirmationDialog,
+    TextButton,
   ],
 })
-export class TransactionList implements OnInit {
+export class TransactionList implements OnChanges {
   private readonly transactionService = inject(TransactionService);
   private readonly destroyRef = inject(DestroyRef);
+  readonly transactionsChanged = output<void>();
+  readonly transactionsLoaded = output<Transaction[]>();
   private loadRequest?: Subscription;
   protected readonly deleteDialog = viewChild.required<DeleteConfirmationDialog>('deleteDialog');
   protected readonly deleting = signal(false);
@@ -36,24 +51,32 @@ export class TransactionList implements OnInit {
   protected readonly loadError = signal('');
   protected readonly transactions = signal<Transaction[]>([]);
   protected readonly selectedTransaction = signal<Transaction | null>(null);
+  protected categoryType = CategoryType;
   categories = input<Category[]>([]);
   readonly year = input.required<number>();
   readonly month = input.required<number>();
 
-  ngOnInit() {
-    this.loadTransactions();
+  readonly totalsChanged = output<TransactionTotalsState>();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['year'] || changes['month']) {
+      this.transactions.set([]);
+      this.loadTransactions();
+    }
   }
 
-  protected onTransactionSaved(dialog: Dialog): void {
+  protected onTransactionSaved(dialog: Dialog) {
     dialog.forceClose();
+    this.transactionsChanged.emit();
     this.loadTransactions();
   }
 
-  loadTransactions(): void {
+  loadTransactions() {
     this.loadRequest?.unsubscribe();
 
     this.loading.set(true);
     this.loadError.set('');
+    this.totalsChanged.emit({ status: 'loading' });
     this.loadRequest = this.transactionService
       .getAll(this.year(), this.month())
       .pipe(
@@ -61,8 +84,27 @@ export class TransactionList implements OnInit {
         finalize(() => this.loading.set(false)),
       )
       .subscribe({
-        next: (transactions) => this.transactions.set(transactions),
-        error: () => this.loadError.set('Transactions could not be loaded. Please try again.'),
+        next: (transactions) => {
+          this.transactions.set(transactions);
+          let expenses = 0;
+          let incomes = 0;
+          transactions.forEach((item) => {
+            if (item.category.type === this.categoryType.Expense) {
+              expenses += item.amount;
+            } else {
+              incomes += item.amount;
+            }
+          });
+          this.totalsChanged.emit({ status: 'ready', expenses, income: incomes });
+          this.transactionsLoaded.emit(transactions);
+        },
+        error: () => {
+          this.loadError.set('Transactions could not be loaded. Please try again.');
+          this.totalsChanged.emit({
+            status: 'error',
+            message: 'Totals could not be loaded. Please try again.',
+          });
+        },
       });
   }
 
@@ -84,7 +126,9 @@ export class TransactionList implements OnInit {
 
   protected confirmDelete(): void {
     const transaction = this.selectedTransaction();
-    if (!transaction || this.deleting()) return;
+    if (!transaction || this.deleting()) {
+      return;
+    }
 
     this.deleting.set(true);
     this.responseError.set('');
@@ -94,6 +138,7 @@ export class TransactionList implements OnInit {
       .subscribe({
         next: () => {
           this.deleteDialog().close();
+          this.transactionsChanged.emit();
           this.loadTransactions();
         },
         error: (error: HttpErrorResponse) => {

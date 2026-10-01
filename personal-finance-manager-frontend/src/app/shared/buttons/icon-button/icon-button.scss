@@ -14,7 +14,7 @@
   border-radius: 6px;
 
   background: transparent;
-  color: #6c757d;
+  color: var(--color-text-muted);
 
   cursor: pointer;
 
@@ -28,8 +28,8 @@
   }
 
   &:hover {
-    background: #f1f3f5;
-    color: #212529;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
   }
 
   &:focus-visible {
@@ -38,7 +38,7 @@
   }
 
   &.danger:hover {
-    background: #fff5f5;
-    color: #dc3545;
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
   }
 }

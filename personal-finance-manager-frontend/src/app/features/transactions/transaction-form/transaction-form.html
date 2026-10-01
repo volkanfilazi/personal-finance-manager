@@ -19,7 +19,14 @@
       </div>
 
       <label for="transaction-amount" class="form-label"> Amount </label>
-      <input id="transaction-amount" type="number" min="0.1" step="any" class="form-control" formControlName="amount" />
+      <input
+        id="transaction-amount"
+        type="number"
+        min="0.1"
+        step="any"
+        class="form-control"
+        formControlName="amount"
+      />
       <div class="field-error">
         @if (form.controls.amount.touched && form.controls.amount.hasError('required')) {
           Amount is required.
@@ -51,18 +58,11 @@
     </div>
 
     <div class="form-actions">
-      <button type="submit" class="btn btn-primary">
-        @if (loading()) {
-          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
-          Saving...
-        } @else {
-          @if (this.updateForm()) {
-            Save
-          } @else {
-            Add transaction
-          }
-        }
-      </button>
+      <app-text-button
+        type="submit"
+        [label]="this.updateForm() ? 'Save' : 'Add transaction'"
+        [loading]="loading()"
+      ></app-text-button>
     </div>
 
     @if (responseError()) {

@@ -1,0 +1,31 @@
+<div class="spending-summary" [attr.aria-busy]="status() === 'loading'">
+  <h2>Spending by category</h2>
+  @if (status() === 'loading') {
+    <p class="status" role="status">Loading spending...</p>
+  } @else if (status() === 'error') {
+    <p class="status text-danger" role="alert">Spending could not be loaded. Please try again.</p>
+    <app-text-button label="Retry" (click)="retry.emit()" />
+  } @else {
+    <ul class="spending-list">
+      @for (category of spending(); track category.id) {
+        <li class="spending-row">
+          <span class="category-name" [title]="category.name">{{ category.name }}</span>
+          <div class="bar-track" aria-hidden="true">
+            <div class="bar-fill" [style.width.%]="category.amount / spending()[0].amount * 100"></div>
+          </div>
+          <span class="amount">{{ category.amount | currency: 'EUR' }}</span>
+        </li>
+      } @empty {
+        <li class="status">No expenses for this month.</li>
+      }
+    </ul>
+    @if (highest().length) {
+      <footer class="highest-spending">
+        <h3>Highest spending {{ highest().length > 1 ? 'categories' : 'category' }}</h3>
+        @for (category of highest(); track category.id) {
+          <p>{{ category.name }} <span aria-hidden="true">·</span> {{ category.amount | currency: 'EUR' }}</p>
+        }
+      </footer>
+    }
+  }
+</div>

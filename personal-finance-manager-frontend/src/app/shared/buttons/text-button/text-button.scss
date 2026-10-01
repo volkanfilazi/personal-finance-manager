@@ -1,0 +1,96 @@
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.text-button {
+  --button-ink: var(--color-primary);
+  --button-surface: var(--color-primary-soft);
+  --button-hover: var(--color-primary-hover);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 9px 16px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--button-surface);
+  color: var(--button-ink);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background-color 150ms ease, transform 150ms ease;
+
+  &.secondary {
+    --button-ink: var(--color-text-muted);
+    --button-surface: transparent;
+    --button-hover: var(--color-surface-hover);
+  }
+
+  &.danger {
+    --button-ink: var(--color-danger);
+    --button-surface: var(--color-danger-soft);
+    --button-hover: var(--color-danger-hover);
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--button-hover);
+
+    .button-label::after { transform: scaleX(1); }
+  }
+
+  &:active:not(:disabled) { transform: translateY(1px); }
+
+  &:focus-visible {
+    outline: 2px solid var(--button-ink);
+    outline-offset: 3px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &[aria-busy='true'] {
+    opacity: 0.8;
+    cursor: progress;
+  }
+}
+
+.button-label {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 -3px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 150ms ease;
+  }
+}
+
+.button-spinner {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 13px;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spin 700ms linear infinite;
+}
+
+@keyframes button-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-button, .button-label::after { transition: none; }
+  .button-spinner { animation: none; }
+}

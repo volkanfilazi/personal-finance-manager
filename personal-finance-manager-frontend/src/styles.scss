@@ -1,1 +1,139 @@
+@use './styles/theme';
 @import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Adapt the Bootstrap components used in this app to our palette.
+:root {
+  --bs-body-color: var(--color-text);
+  --bs-body-bg: var(--color-surface);
+  --bs-secondary-color: var(--color-text-muted);
+  --bs-secondary-bg: var(--color-surface-hover);
+  --bs-border-color: var(--color-border);
+}
+
+.text-primary { color: var(--color-primary) !important; }
+.text-danger { color: var(--color-danger) !important; }
+
+.btn:is(.btn-primary, .btn-outline-primary, .btn-danger, .btn-light) {
+  --button-ink: var(--color-primary);
+  --button-surface: var(--color-primary-soft);
+  --button-hover: var(--color-primary-hover);
+  color: var(--button-ink);
+  background: var(--button-surface);
+  border-color: transparent;
+
+  &.btn-danger {
+    --button-ink: var(--color-danger);
+    --button-surface: var(--color-danger-soft);
+    --button-hover: var(--color-danger-hover);
+  }
+
+  &.btn-light {
+    --button-ink: var(--color-text-muted);
+    --button-surface: var(--color-surface-muted);
+    --button-hover: var(--color-surface-hover);
+  }
+
+  &:hover:not(:disabled), &:active:not(:disabled) { background: var(--button-hover); }
+  &:focus-visible { box-shadow: none; outline: 2px solid var(--button-ink); outline-offset: 3px; }
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: var(--color-primary-fill);
+  box-shadow: var(--focus-ring);
+}
+
+.table {
+  --bs-table-hover-bg: var(--color-surface-muted);
+  --bs-table-hover-color: var(--color-text);
+}
+
+.progress {
+  --bs-progress-bg: var(--color-track);
+  --bs-progress-bar-bg: var(--color-primary-fill);
+}
+
+.progress-bar.is-over-budget { --bs-progress-bar-bg: var(--color-danger-fill); }
+
+.finance-list {
+  min-width: 0;
+
+  > header {
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+
+    > h1 {
+      margin: 0;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+  }
+
+  .table {
+    margin-bottom: 0;
+    font-size: 0.875rem;
+  }
+  .table th {
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+  .actions {
+    display: flex;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+}
+
+.list-card.budgets .finance-list > header,
+.list-card.categories .finance-list > header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-surface);
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: calc(-1 * var(--card-padding, 20px));
+    right: calc(-1 * var(--card-padding, 20px));
+    height: var(--card-padding, 20px);
+    background: inherit;
+  }
+}
+
+.list-card.budgets .finance-list > .d-flex {
+  gap: 12px;
+
+  > .w-100 {
+    min-width: 0;
+  }
+  > .w-100 > div:first-child {
+    overflow-wrap: anywhere;
+  }
+  > .w-100 > .d-flex {
+    flex-wrap: wrap;
+  }
+}
+
+.list-card.categories .finance-list > .d-flex {
+  gap: 12px;
+  padding-block: 4px;
+
+  > div:first-child {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
