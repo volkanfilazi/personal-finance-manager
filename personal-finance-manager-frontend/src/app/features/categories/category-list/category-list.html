@@ -1,9 +1,7 @@
-<main>
-  <header class="d-flex flex-row">
-    <h1>categories</h1>
-    <button type="button" class="btn btn-primary" (click)="categoryDialog.open()">
-      Add category
-    </button>
+<main class="finance-list">
+  <header class="d-flex flex-row align-items-center gap-1">
+    <h1>Categories</h1>
+    <app-text-button label="Add" (click)="categoryDialog.open()" />
   </header>
   @for (category of categories(); track category.id) {
     <div class="d-flex flex-row align-items-center justify-content-between">
@@ -55,5 +53,4 @@
   </app-dialog>
 
   <app-save-changes-dialog #confirmation />
-  
 </main>

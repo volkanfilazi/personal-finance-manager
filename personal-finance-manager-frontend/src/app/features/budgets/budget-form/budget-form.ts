@@ -1,43 +1,30 @@
-import {
-  Component,
-  computed,
-  effect,
-  inject,
-  input,
-  output,
-  signal,
-  untracked,
-} from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { formatDate } from '@angular/common';
-import { finalize, map, Observable } from 'rxjs';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { TransactionService } from '../transaction.service';
-import { Category } from '../../categories/category.model';
-import { CreateTransaction, Transaction } from '../transaction.model';
 import { ApiError } from '../../../core/api/api-error.model';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { BudgetService } from '../budget.service';
+import { Budget, CreateBudget } from '../budget.model';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TextButton } from '../../../shared/buttons/text-button/text-button';
+import { finalize, map, Observable } from 'rxjs';
+import { Category } from '../../categories/category.model';
 
 @Component({
-  selector: 'app-transaction-form',
-  imports: [ReactiveFormsModule, TextButton],
-  templateUrl: './transaction-form.html',
+  selector: 'app-budget-form',
+  imports: [ReactiveFormsModule],
+  templateUrl: './budget-form.html',
 })
-export class TransactionForm {
+export class BudgetForm {
   private readonly fb = inject(FormBuilder);
-  private readonly transactionService = inject(TransactionService);
-
+  private readonly budgetService = inject(BudgetService);
   protected responseError = signal<string>('');
   readonly saved = output<void>();
-  readonly updateForm = input<Transaction | null>(null);
   readonly loading = signal(false);
+  readonly updateForm = input<Budget | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    description: ['', [Validators.required, Validators.maxLength(200)]],
-    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.1)]),
-    date: ['', [Validators.required]],
+    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
     categoryId: ['', Validators.required],
+    monthYear: ['', Validators.required],
   });
 
   categories = input<Category[]>([]);
@@ -70,26 +57,30 @@ export class TransactionForm {
 
       if (!this.updateForm() && firstCategory && !control.value) {
         control.setValue(firstCategory.id);
-        this.initialValue.update((initial) => ({ ...initial, categoryId: firstCategory.id }));
+        this.initialValue.update(initial => ({ ...initial, categoryId: firstCategory.id }));
       }
     });
   }
 
-  reset(): void {
-    const transaction = this.updateForm();
+  reset() {
+    const budget = this.updateForm();
 
     this.form.reset({
-      description: transaction?.description ?? '',
-      amount: transaction?.amount ?? null,
-      date: transaction ? formatDate(transaction.date, 'yyyy-MM-dd', 'en-US') : '',
-      categoryId: transaction?.category.id ?? this.categories()[0]?.id ?? '',
+      amount: budget?.amount ?? null,
+      categoryId: budget?.category.id ?? this.categories()[0]?.id ?? '',
+      monthYear: budget ? `${budget.year}-${String(budget.month).padStart(2, '0')}` : '',
     });
 
+    // The update endpoint only accepts the amount.
+    for (const control of [this.form.controls.categoryId, this.form.controls.monthYear]) {
+      if (budget) control.disable();
+      else control.enable();
+    }
     this.initialValue.set(this.form.getRawValue());
     this.responseError.set('');
   }
 
-  submit() {
+  submit(): void {
     if (this.loading()) {
       return;
     }
@@ -100,26 +91,31 @@ export class TransactionForm {
     }
 
     const value = this.form.getRawValue();
-    const transaction = this.updateForm();
-    const body: CreateTransaction = {
-      description: value.description,
+    const budget = this.updateForm();
+
+    const [year, month] = value.monthYear.split('-').map(Number);
+
+    const body: CreateBudget = {
       amount: Number(value.amount),
-      date: value.date,
       categoryId: value.categoryId,
+      year,
+      month,
     };
 
     this.loading.set(true);
     this.responseError.set('');
-
-    const request$: Observable<Transaction | void> = transaction
-      ? this.transactionService.update(transaction.id, body)
-      : this.transactionService.create(body);
+    const request$: Observable<Budget | void> = budget
+      ? this.budgetService.update(budget.id, { amount: body.amount })
+      : this.budgetService.create(body);
 
     request$.pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: () => this.saved.emit(),
+      next: () => {
+        this.initialValue.set(this.form.getRawValue());
+        this.saved.emit();
+      },
       error: (error: HttpErrorResponse) => {
         const apiError = error.error as ApiError | null;
-        this.responseError.set(apiError?.message ?? 'Something went wrong. Please try again.');
+        this.responseError.set(apiError?.message ?? 'Budget could not be saved. Please try again.');
       },
     });
   }

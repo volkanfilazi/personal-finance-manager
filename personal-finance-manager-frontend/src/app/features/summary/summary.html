@@ -1,0 +1,38 @@
+@let summary = totals();
+<section
+  class="totals-summary"
+  aria-label="Monthly totals"
+  [attr.aria-busy]="summary.status === 'loading'"
+>
+  <div class="totals-grid">
+    <div class="total-card">
+      <h2>Total income</h2>
+      <p>{{ summary.status === 'ready' ? (summary.income | currency: 'EUR') : '—' }}</p>
+    </div>
+    <div class="total-card">
+      <h2>Total expenses</h2>
+      <p>{{ summary.status === 'ready' ? (summary.expenses | currency: 'EUR') : '—' }}</p>
+    </div>
+    <div class="total-card">
+      <h2>Balance</h2>
+      <p>{{ summary.status === 'ready' ? (balance() | currency: 'EUR') : '—' }}</p>
+    </div>
+  </div>
+  @if (summary.status === 'loading') {
+    <p class="summary-status" role="status">
+      <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Loading
+      totals...
+    </p>
+  } @else if (summary.status === 'error') {
+    <div class="summary-status">
+      <p class="text-danger mb-2" role="alert">{{ summary.message }}</p>
+      <button
+        type="button"
+        class="btn btn-outline-primary btn-sm"
+        (click)="refreshTransactionList()"
+      >
+        Retry
+      </button>
+    </div>
+  }
+</section>

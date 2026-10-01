@@ -1,0 +1,63 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <fieldset [disabled]="loading()" class="border-0 p-0">
+    <div class="form-field">
+      <label for="budget-amount" class="form-label"> Amount </label>
+      <input
+        id="budget-amount"
+        type="number"
+        min="0.01"
+        step="any"
+        class="form-control"
+        formControlName="amount"
+      />
+      <div class="field-error">
+        @if (form.controls.amount.touched && form.controls.amount.hasError('required')) {
+          Amount is required.
+        } @else if (form.controls.amount.touched && form.controls.amount.hasError('min')) {
+          Minimum amount is 0.01.
+        }
+      </div>
+
+      <label for="budget-month-year" class="form-label">Year / Month</label>
+
+      <input id="budget-month-year" type="month" class="form-control" formControlName="monthYear" />
+      <div class="field-error">
+        @if (form.controls.monthYear.touched && form.controls.monthYear.hasError('required')) {
+          Year - Month is required.
+        }
+      </div>
+
+      <label for="budget-category" class="form-label"> Category </label>
+
+      <select id="budget-category" formControlName="categoryId" class="form-select">
+        @for (category of categories(); track category.id) {
+          <option [value]="category.id">{{ category.name }}</option>
+        }
+      </select>
+      <div class="field-error">
+        @if (form.controls.categoryId.touched && form.controls.categoryId.hasError('required')) {
+          Category is required.
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        @if (loading()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Saving...
+        } @else {
+          @if (this.updateForm()) {
+            Save
+          } @else {
+            Add budget
+          }
+        }
+      </button>
+    </div>
+
+    @if (responseError()) {
+      <p class="text-danger" role="alert">{{ responseError() }}</p>
+    }
+  </fieldset>
+</form>

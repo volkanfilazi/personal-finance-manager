@@ -1,0 +1,13 @@
+<button
+  class="text-button"
+  [type]="type()"
+  [class.secondary]="variant() === 'secondary'"
+  [class.danger]="variant() === 'danger'"
+  [disabled]="disabled() || loading()"
+  [attr.aria-busy]="loading()"
+>
+  @if (loading()) {
+    <span class="button-spinner" aria-hidden="true"></span>
+  }
+  <span class="button-label">{{ label() }}</span>
+</button>

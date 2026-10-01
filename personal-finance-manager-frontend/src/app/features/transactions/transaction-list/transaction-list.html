@@ -1,7 +1,7 @@
-<main>
+<main class="finance-list">
   <header class="d-flex flex-row align-items-center gap-1">
     <h1>Transactions</h1>
-    <button (click)="addTransaction.open()">Add transaction</button>
+    <app-text-button label="Add" (click)="addTransaction.open()" />
   </header>
   <div class="table-responsive">
     <table class="table table-hover align-middle" [attr.aria-busy]="loading()">
@@ -11,17 +11,16 @@
       <thead>
         <tr>
           <th scope="col">Date</th>
-          <th scope="col" class="text-end">Amount</th>
-          <th scope="col">Category</th>
-          <th scope="col">Type</th>
           <th scope="col">Description</th>
+          <th scope="col">Category</th>
+          <th scope="col" class="text-end">Amount</th>
           <th scope="col" class="text-end">Actions</th>
         </tr>
       </thead>
       <tbody>
         @if (loading()) {
           <tr>
-            <td colspan="6" class="text-center py-4">
+            <td colspan="5" class="text-center py-4">
               <span role="status">
                 <span class="spinner-border text-primary" aria-hidden="true"></span>
                 <span class="visually-hidden">Loading transactions...</span>
@@ -31,20 +30,28 @@
         } @else {
           @if (loadError()) {
             <tr>
-              <td colspan="6" class="text-center">
+              <td colspan="5" class="text-center">
                 <p class="text-danger mb-2" role="alert">{{ loadError() }}</p>
-                <button type="button" class="btn btn-outline-primary btn-sm" (click)="loadTransactions()">Retry</button>
+                <app-text-button label="Retry" (click)="loadTransactions()" />
               </td>
             </tr>
           }
           @for (transaction of transactions(); track transaction.id) {
             <tr>
               <td class="text-nowrap">{{ transaction.date | date: 'dd MMM yyyy' }}</td>
-              <td class="text-end">{{ transaction.amount }}</td>
-              <td>{{ transaction.category.name }}</td>
-              <td>{{ transaction.category.type }}</td>
-              <td>{{ transaction.description }}</td>
               <td>
+                <span class="description-text" [title]="transaction.description">{{ transaction.description }}</span>
+              </td>
+              <td>
+                <span class="category-text" [title]="transaction.category.name + ' - ' + transaction.category.type">
+                  {{ transaction.category.name }} - {{ transaction.category.type }}
+                </span>
+              </td>
+              <td class="text-end text-nowrap">
+                {{ transaction.category.type === this.categoryType.Expense ? '-' : '+' }}
+                {{ transaction.amount }}
+              </td>
+              <td class="text-nowrap">
                 <div class="d-flex justify-content-end gap-1">
                   <app-icon-button
                     icon="edit"
@@ -62,7 +69,7 @@
           } @empty {
             @if (!loadError()) {
               <tr>
-                <td colspan="6" class="text-center text-muted">No transactions found.</td>
+                <td colspan="5" class="text-center text-muted">No transactions found.</td>
               </tr>
             }
           }
@@ -100,7 +107,7 @@
   </app-dialog>
 
   <app-save-changes-dialog #confirmation />
-  
+
   <app-delete-confirmation-dialog
     #deleteDialog
     [itemName]="selectedTransaction()?.description ?? ''"

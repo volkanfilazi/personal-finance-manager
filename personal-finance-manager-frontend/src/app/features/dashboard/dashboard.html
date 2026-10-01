@@ -1,16 +1,58 @@
+<header class="dashboard-header">
+  <h1>Personal Finance Manager</h1>
+  <nav class="month-navigation" aria-label="Select month">
+    <button type="button" class="month-arrow" aria-label="Previous month" (click)="changeMonth(-1)">
+      ‹
+    </button>
+    <span class="selected-month" aria-live="polite" aria-atomic="true">{{
+      selectedDate() | date: 'MMMM yyyy'
+    }}</span>
+    <button type="button" class="month-arrow" aria-label="Next month" (click)="changeMonth(1)">
+      ›
+    </button>
+  </nav>
+</header>
+<section>
+  <app-summary-list
+    [totals]="totals()"
+    (transactionListRefresh)="transactionList.loadTransactions()"
+  ></app-summary-list>
+</section>
 <div class="dashboard-grid">
-  <section class="transactions">
+  <section class="list-card transactions" aria-label="Transactions">
     <app-transaction-list
       #transactionList
       [categories]="this.categories()"
       [year]="selectedDate().getFullYear()"
       [month]="selectedDate().getMonth() + 1"
+      (transactionsChanged)="transactionChanged()"
+      (totalsChanged)="onTotalsChanged($event)"
+      (transactionsLoaded)="transactions.set($event)"
     />
   </section>
-  <section class="budgets">
-    <div>budget</div>
+  <section class="list-card budgets" aria-label="Budgets">
+    <app-budget-list
+      #budgetList
+      [categories]="this.categories()"
+      [year]="selectedDate().getFullYear()"
+      [month]="selectedDate().getMonth() + 1"
+    />
   </section>
-  <section class="categories">
+  <section class="list-card categories" aria-label="Categories">
+    @if (categoriesLoading()) {
+      <p role="status" class="text-muted">Loading categories...</p>
+    }
+    @if (categoriesError()) {
+      <p role="alert" class="text-danger">{{ categoriesError() }}</p>
+      <app-text-button label="Retry" (click)="loadCategories()" />
+    }
     <app-category-list [categories]="this.categories()" (categoriesChanged)="categoryChanged()" />
+  </section>
+  <section class="list-card spending" aria-label="Spending by category">
+    <app-spending-by-category
+      [transactions]="transactions()"
+      [status]="totals().status"
+      (retry)="transactionList.loadTransactions()"
+    />
   </section>
 </div>

@@ -1,0 +1,96 @@
+<main class="finance-list">
+  <header class="d-flex flex-row align-items-center gap-1">
+    <h1>Budgets</h1>
+    <app-text-button label="Add" (click)="addBudget.open()" />
+  </header>
+  @if (loading()) {
+    <div role="status" class="text-center py-3">
+      <span class="spinner-border text-primary" aria-hidden="true"></span>
+      <span class="visually-hidden">Loading budgets...</span>
+    </div>
+  }
+  @if (loadError()) {
+    <p class="text-danger" role="alert">{{ loadError() }}</p>
+    <button type="button" class="btn btn-outline-primary" (click)="loadBudgets()">Retry</button>
+  }
+  @for (budget of budgets(); track budget.id) {
+    <div class="d-flex flex-row justify-content-between align-items-center">
+      <div class="w-100">
+        <div>{{ budget.category.name }}</div>
+        <div class="d-flex flex-row gap-1">
+          <span>{{ budget.spent | currency: 'EUR' }}</span>
+          <span>spent of</span>
+          <span>{{ budget.amount | currency: 'EUR' }}</span>
+        </div>
+
+        @let percent = budget.amount > 0 ? (budget.spent / budget.amount) * 100 : 0;
+
+        <div class="d-flex align-items-center gap-2">
+          <div
+            class="progress flex-grow-1"
+            role="progressbar"
+            [attr.aria-label]="budget.category.name + ' budget usage'"
+            [attr.aria-valuenow]="percent > 100 ? 100 : percent"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              class="progress-bar"
+              [class.is-over-budget]="percent > 100"
+              [style.width.%]="percent > 100 ? 100 : percent"
+            ></div>
+          </div>
+
+          <span>{{ percent | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <app-icon-button
+          icon="edit"
+          label="Edit budget"
+          (click)="openEditDialog(budget, editDialog)"
+        />
+        <app-icon-button
+          icon="delete"
+          label="Delete budget"
+          (click)="openDeleteDialog(budget, deleteDialog)"
+        />
+      </div>
+    </div>
+  }
+
+  <app-delete-confirmation-dialog
+    #deleteDialog
+    [itemName]="selectedBudget()?.category?.name ?? ''"
+    [loading]="deleting()"
+    [error]="responseError()"
+    (confirmed)="confirmDelete()"
+    (closed)="selectedBudget.set(null)"
+  />
+  <app-dialog
+    #addBudget
+    title="Add budget"
+    [hasChanges]="createForm.hasChanges() || createForm.loading()"
+    (closeBlocked)="confirmation.open(createForm, addBudget)"
+    (closed)="createForm.reset()"
+  >
+    <app-budget-form #createForm [categories]="categories()" (saved)="onBudgetSaved(addBudget)" />
+  </app-dialog>
+  <app-dialog
+    #editDialog
+    title="Edit budget"
+    [hasChanges]="editForm.hasChanges() || editForm.loading()"
+    (closeBlocked)="confirmation.open(editForm, editDialog)"
+    (closed)="onEditClosed(editForm)"
+  >
+    <app-budget-form
+      #editForm
+      [categories]="categories()"
+      [updateForm]="selectedBudget()"
+      (saved)="onBudgetSaved(editDialog)"
+    />
+  </app-dialog>
+
+  <app-save-changes-dialog #confirmation />
+</main>

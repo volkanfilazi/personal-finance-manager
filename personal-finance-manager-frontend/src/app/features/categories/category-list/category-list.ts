@@ -5,16 +5,24 @@ import { CategoryService } from '../category.service';
 import { Category } from '../category.model';
 import { CategoryForm } from '../category-form/category-form';
 import { Dialog } from '../../../shared/dialogs/dialog/dialog';
-import { IconButton } from '../../../shared/icon-button/icon-button';
+import { IconButton } from '../../../shared/buttons/icon-button/icon-button';
 import { ApiError } from '../../../core/api/api-error.model';
 import { SaveChangesDialog } from '../../../shared/dialogs/save-changes-dialog/save-changes-dialog';
 import { DeleteConfirmationDialog } from '../../../shared/dialogs/delete-confirmation-dialog/delete-confirmation-dialog';
+import { TextButton } from '../../../shared/buttons/text-button/text-button';
 
 @Component({
   selector: 'app-category-list',
   templateUrl: './category-list.html',
   styleUrl: './category-list.scss',
-  imports: [CategoryForm, Dialog, IconButton, SaveChangesDialog, DeleteConfirmationDialog],
+  imports: [
+    CategoryForm,
+    Dialog,
+    IconButton,
+    SaveChangesDialog,
+    DeleteConfirmationDialog,
+    TextButton,
+  ],
 })
 export class CategoryList {
   private readonly categoryService = inject(CategoryService);

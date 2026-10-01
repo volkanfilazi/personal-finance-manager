@@ -1,0 +1,49 @@
+:host {
+  display: block;
+  min-width: 0;
+  min-height: 0;
+}
+
+.finance-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+
+  > header {
+    flex-shrink: 0;
+  }
+}
+
+.table-responsive {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+
+thead th {
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-surface);
+}
+
+.description-text {
+  display: -webkit-box;
+  width: clamp(10rem, 14vw, 18rem);
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.category-text {
+  display: block;
+  width: clamp(7rem, 10vw, 12rem);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
