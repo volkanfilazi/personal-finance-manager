@@ -1,3 +1,4 @@
+using PersonalFinanceManager.Api.Infrastructure.Http;
 using System.ComponentModel.DataAnnotations;
 using PersonalFinanceManager.Api.Features.Categories;
 
@@ -14,6 +15,7 @@ public class CreateTransactionDto
     "0.01",
     "79228162514264337593543950335",
     ParseLimitsInInvariantCulture = true)]
+    [CurrencyPrecision]
     public decimal Amount { get; set; }
 
     public DateTime Date { get; set; }

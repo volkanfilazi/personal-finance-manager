@@ -58,7 +58,7 @@ public class BudgetsController : ControllerBase
         var response = new BudgetDto
         {
             Id = createdBudget.Id,
-            Amount = createdBudget.Amount,
+            Amount = decimal.Round(createdBudget.Amount, 2, MidpointRounding.AwayFromZero),
             Year = createdBudget.Year,
             Month = createdBudget.Month,
             Category = new CategoryDto
@@ -95,7 +95,7 @@ public class BudgetsController : ControllerBase
         var budgetDto = new BudgetDto
         {
             Id = budget.Id,
-            Amount = budget.Amount,
+            Amount = decimal.Round(budget.Amount, 2, MidpointRounding.AwayFromZero),
             Year = budget.Year,
             Month = budget.Month,
             Category = new CategoryDto
@@ -121,7 +121,7 @@ public class BudgetsController : ControllerBase
             .Select(result => new BudgetDto
             {
                 Id = result.Budget.Id,
-                Amount = result.Budget.Amount,
+                Amount = decimal.Round(result.Budget.Amount, 2, MidpointRounding.AwayFromZero),
                 Year = result.Budget.Year,
                 Month = result.Budget.Month,
                 Category = new CategoryDto
