@@ -1,0 +1,12 @@
+:host { display: block; }
+
+.form-field { margin-bottom: 8px; }
+
+.field-error {
+  display: block;
+  min-height: 20px;
+  margin-top: 4px;
+  font-size: 0.8125rem;
+  line-height: 20px;
+  color: var(--color-danger);
+}

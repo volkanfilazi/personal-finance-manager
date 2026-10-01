@@ -1,0 +1,7 @@
+<div class="form-field">
+  <label [for]="inputId()" class="form-label">{{ label() }}</label>
+
+  <ng-content />
+
+  <small class="field-error" [id]="inputId() + '-error'" aria-live="polite">{{ error() }}</small>
+</div>

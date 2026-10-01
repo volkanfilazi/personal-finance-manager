@@ -1,0 +1,13 @@
+<app-form-field [inputId]="inputId()" [label]="label()" [error]="error()">
+  <select
+    [id]="inputId()"
+    class="form-select"
+    [formControl]="control()"
+    [attr.aria-invalid]="error() ? 'true' : null"
+    [attr.aria-describedby]="error() ? inputId() + '-error' : null"
+  >
+    @for (option of options(); track option.value) {
+      <option [value]="option.value">{{ option.label }}</option>
+    }
+  </select>
+</app-form-field>

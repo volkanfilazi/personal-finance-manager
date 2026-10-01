@@ -18,13 +18,18 @@ import { CreateTransaction, Transaction } from '../transaction.model';
 import { ApiError } from '../../../core/api/api-error.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TextButton } from '../../../shared/buttons/text-button/text-button';
+import { Input } from '../../../shared/form-elements/input/input';
+import { Select } from '../../../shared/form-elements/select/select';
+import { Textarea } from '../../../shared/form-elements/textarea/textarea';
 
+let nextFormId = 0;
 @Component({
   selector: 'app-transaction-form',
-  imports: [ReactiveFormsModule, TextButton],
+  imports: [ReactiveFormsModule, TextButton, Input, Select, Textarea],
   templateUrl: './transaction-form.html',
 })
 export class TransactionForm {
+  protected readonly formId = 'transaction-' + nextFormId++;
   private readonly fb = inject(FormBuilder);
   private readonly transactionService = inject(TransactionService);
 
@@ -35,12 +40,15 @@ export class TransactionForm {
 
   protected readonly form = this.fb.nonNullable.group({
     description: ['', [Validators.required, Validators.maxLength(200)]],
-    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.1)]),
+    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
     date: ['', [Validators.required]],
     categoryId: ['', Validators.required],
   });
 
   categories = input<Category[]>([]);
+  protected readonly categoryOptions = computed(() =>
+    this.categories().map(category => ({ value: category.id, label: category.name })),
+  );
 
   private readonly initialValue = signal(this.form.getRawValue());
 
