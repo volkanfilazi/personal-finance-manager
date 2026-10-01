@@ -6,14 +6,19 @@ import { BudgetService } from '../budget.service';
 import { Budget, CreateBudget } from '../budget.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { finalize, map, Observable } from 'rxjs';
-import { Category } from '../../categories/category.model';
+import { Category, CategoryType } from '../../categories/category.model';
+import { Input } from '../../../shared/form-elements/input/input';
+import { Select } from '../../../shared/form-elements/select/select';
+
+let nextFormId = 0;
 
 @Component({
   selector: 'app-budget-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Input, Select],
   templateUrl: './budget-form.html',
 })
 export class BudgetForm {
+  protected readonly formId = 'budget-' + nextFormId++;
   private readonly fb = inject(FormBuilder);
   private readonly budgetService = inject(BudgetService);
   protected responseError = signal<string>('');
@@ -28,6 +33,12 @@ export class BudgetForm {
   });
 
   categories = input<Category[]>([]);
+  protected readonly expenseCategories = computed(() =>
+    this.categories().filter(category => category.type === CategoryType.Expense),
+  );
+  protected readonly categoryOptions = computed(() =>
+    this.expenseCategories().map(category => ({ value: category.id, label: category.name })),
+  );
 
   private readonly initialValue = signal(this.form.getRawValue());
 
@@ -52,12 +63,13 @@ export class BudgetForm {
     });
 
     effect(() => {
-      const firstCategory = this.categories()[0];
+      const categories = this.expenseCategories();
       const control = this.form.controls.categoryId;
 
-      if (!this.updateForm() && firstCategory && !control.value) {
-        control.setValue(firstCategory.id);
-        this.initialValue.update(initial => ({ ...initial, categoryId: firstCategory.id }));
+      if (!this.updateForm() && !categories.some(category => category.id === control.value)) {
+        const categoryId = categories[0]?.id ?? '';
+        control.setValue(categoryId);
+        this.initialValue.update(initial => ({ ...initial, categoryId }));
       }
     });
   }
@@ -67,7 +79,7 @@ export class BudgetForm {
 
     this.form.reset({
       amount: budget?.amount ?? null,
-      categoryId: budget?.category.id ?? this.categories()[0]?.id ?? '',
+      categoryId: budget?.category.id ?? this.expenseCategories()[0]?.id ?? '',
       monthYear: budget ? `${budget.year}-${String(budget.month).padStart(2, '0')}` : '',
     });
 

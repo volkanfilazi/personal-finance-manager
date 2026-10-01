@@ -1,0 +1,10 @@
+<app-form-field [inputId]="inputId()" [label]="label()" [error]="error()">
+  <textarea
+    [id]="inputId()"
+    class="form-control"
+    [rows]="rows()"
+    [formControl]="control()"
+    [attr.aria-invalid]="error() ? 'true' : null"
+    [attr.aria-describedby]="error() ? inputId() + '-error' : null"
+  ></textarea>
+</app-form-field>

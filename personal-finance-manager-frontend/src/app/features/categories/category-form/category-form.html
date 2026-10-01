@@ -1,29 +1,22 @@
 <form [formGroup]="form" (ngSubmit)="submit()">
   <fieldset [disabled]="loading()" class="border-0 p-0">
-    <div class="form-field">
-      <label for="category-name" class="form-label"> Name </label>
-
-      <input id="category-name" type="text" class="form-control" formControlName="name" />
-
-      <div class="field-error">
-        @if (form.controls.name.touched && form.controls.name.hasError('required')) {
-          Name is required.
-        } @else if (form.controls.name.touched && form.controls.name.hasError('maxlength')) {
-          Maximum 50 characters.
-        }
-      </div>
-    </div>
-
-    <div class="form-field">
-      <label for="category-type" class="form-label"> Type </label>
-
-      <select id="category-type" class="form-select" formControlName="type">
-        <option value="Income">Income</option>
-        <option value="Expense">Expense</option>
-      </select>
-
-      <div class="field-error"></div>
-    </div>
+      <app-input
+        [inputId]="formId + '-name'"
+        label="Name"
+        [control]="form.controls.name"
+        [error]="
+          !form.controls.name.touched ? ''
+            : form.controls.name.hasError('required') ? 'Name is required.'
+            : form.controls.name.hasError('maxlength') ? 'Maximum 50 characters.' : ''
+        "
+      />
+    <app-select
+      [inputId]="formId + '-type'"
+      label="Type"
+      [control]="form.controls.type"
+      [options]="typeOptions"
+      [error]="form.controls.type.touched && form.controls.type.hasError('required') ? 'Type is required.' : ''"
+    />
 
     <div class="response-error">
       {{ responseError() }}

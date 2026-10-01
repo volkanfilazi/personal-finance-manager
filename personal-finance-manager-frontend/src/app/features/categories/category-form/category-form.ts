@@ -6,14 +6,22 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../../core/api/api-error.model';
 import { finalize, map } from 'rxjs';
 import { Category } from '../category.model';
+import { Input } from '../../../shared/form-elements/input/input';
+import { Select } from '../../../shared/form-elements/select/select';
 
+let nextFormId = 0;
 @Component({
   selector: 'app-category-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, Input, Select],
   templateUrl: './category-form.html',
   styleUrl: './category-form.scss',
 })
 export class CategoryForm {
+  protected readonly typeOptions = [
+    { value: 'Income', label: 'Income' },
+    { value: 'Expense', label: 'Expense' },
+  ] as const;
+  protected readonly formId = 'category-' + nextFormId++;
   private readonly fb = inject(FormBuilder);
   private readonly categoryService = inject(CategoryService);
 
