@@ -14,7 +14,7 @@ public class CategoryService
     public async Task<CreateCategoryResult> CreateAsync(Category category)
     {
         var exist = await _categories
-            .Find(x => x.Name == category.Name)
+            .Find(x => x.Name == category.Name && !x.IsDeleted)
             .AnyAsync();
 
         if (exist)
@@ -44,14 +44,14 @@ public class CategoryService
     public async Task<List<Category>> GetAllAsync()
     {
         return await _categories
-            .Find(_ => true)
+            .Find(category => !category.IsDeleted)
             .ToListAsync();
     }
 
     public async Task<bool> UpdateAsync(Category category)
     {
         var result = await _categories.ReplaceOneAsync(
-            existingCategory => existingCategory.Id == category.Id,
+            existingCategory => existingCategory.Id == category.Id && !existingCategory.IsDeleted,
             category);
 
         return result.MatchedCount > 0;
@@ -59,9 +59,13 @@ public class CategoryService
 
     public async Task<bool> DeleteAsync(string id)
     {
-        var result = await _categories.DeleteOneAsync(
-            category => category.Id == id);
+        var update = Builders<Category>.Update
+            .Set(category => category.IsDeleted, true);
 
-        return result.DeletedCount > 0;
+        var result = await _categories.UpdateOneAsync(
+            category => category.Id == id && !category.IsDeleted,
+            update);
+
+        return result.MatchedCount > 0;
     }
 }
