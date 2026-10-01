@@ -18,9 +18,9 @@
       <div class="w-100">
         <div>{{ budget.category.name }}</div>
         <div class="d-flex flex-row gap-1">
-          <span>{{ budget.spent | currency: 'EUR' }}</span>
+          <span>{{ budget.spent | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
           <span>spent of</span>
-          <span>{{ budget.amount | currency: 'EUR' }}</span>
+          <span>{{ budget.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         </div>
 
         @let percent = budget.amount > 0 ? (budget.spent / budget.amount) * 100 : 0;

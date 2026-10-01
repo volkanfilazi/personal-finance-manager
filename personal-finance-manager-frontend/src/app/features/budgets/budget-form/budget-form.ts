@@ -9,6 +9,7 @@ import { finalize, map, Observable } from 'rxjs';
 import { Category, CategoryType } from '../../categories/category.model';
 import { Input } from '../../../shared/form-elements/input/input';
 import { Select } from '../../../shared/form-elements/select/select';
+import { currencyPrecision } from '../../../shared/validators/currency-precision';
 
 let nextFormId = 0;
 
@@ -27,7 +28,7 @@ export class BudgetForm {
   readonly updateForm = input<Budget | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01)]),
+    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01), currencyPrecision]),
     categoryId: ['', Validators.required],
     monthYear: ['', Validators.required],
   });

@@ -49,7 +49,7 @@
               </td>
               <td class="text-end text-nowrap">
                 {{ transaction.category.type === this.categoryType.Expense ? '-' : '+' }}
-                {{ transaction.amount }}
+                {{ transaction.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}
               </td>
               <td class="text-nowrap">
                 <div class="d-flex justify-content-end gap-1">

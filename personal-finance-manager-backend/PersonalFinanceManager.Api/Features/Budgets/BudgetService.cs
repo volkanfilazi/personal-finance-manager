@@ -135,7 +135,7 @@ public class BudgetService
                 var spent = transactions
                     .Where(transaction =>
                         transaction.CategoryId == budget.CategoryId)
-                    .Sum(transaction => transaction.Amount);
+                    .Sum(transaction => decimal.Round(transaction.Amount, 2, MidpointRounding.AwayFromZero));
 
                 return new BudgetWithCategory
                 {

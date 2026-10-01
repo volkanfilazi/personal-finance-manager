@@ -43,7 +43,7 @@ public class TransactionsController : ControllerBase
         {
             Id = createdTransaction.Id,
             Description = createdTransaction.Description,
-            Amount = createdTransaction.Amount,
+            Amount = decimal.Round(createdTransaction.Amount, 2, MidpointRounding.AwayFromZero),
             Date = createdTransaction.Date,
             Category = new CategoryDto
             {
@@ -95,7 +95,7 @@ public class TransactionsController : ControllerBase
         {
             Id = foundTransaction.Id,
             Description = foundTransaction.Description,
-            Amount = foundTransaction.Amount,
+            Amount = decimal.Round(foundTransaction.Amount, 2, MidpointRounding.AwayFromZero),
             Date = foundTransaction.Date,
             Category = new CategoryDto
             {
@@ -120,7 +120,7 @@ public class TransactionsController : ControllerBase
             {
                 Id = result.Transaction.Id,
                 Description = result.Transaction.Description,
-                Amount = result.Transaction.Amount,
+                Amount = decimal.Round(result.Transaction.Amount, 2, MidpointRounding.AwayFromZero),
                 Date = result.Transaction.Date,
                 Category = new CategoryDto
                 {

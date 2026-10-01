@@ -13,7 +13,7 @@
           <div class="bar-track" aria-hidden="true">
             <div class="bar-fill" [style.width.%]="category.amount / spending()[0].amount * 100"></div>
           </div>
-          <span class="amount">{{ category.amount | currency: 'EUR' }}</span>
+          <span class="amount">{{ category.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
         </li>
       } @empty {
         <li class="status">No expenses for this month.</li>
@@ -23,7 +23,7 @@
       <footer class="highest-spending">
         <h3>Highest spending {{ highest().length > 1 ? 'categories' : 'category' }}</h3>
         @for (category of highest(); track category.id) {
-          <p>{{ category.name }} <span aria-hidden="true">·</span> {{ category.amount | currency: 'EUR' }}</p>
+          <p>{{ category.name }} <span aria-hidden="true">·</span> {{ category.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}</p>
         }
       </footer>
     }
