@@ -1,11 +1,16 @@
 <div class="dashboard-grid">
   <section class="transactions">
-    <div>transactions</div>
+    <app-transaction-list
+      #transactionList
+      [categories]="this.categories()"
+      [year]="selectedDate().getFullYear()"
+      [month]="selectedDate().getMonth() + 1"
+    />
   </section>
   <section class="budgets">
     <div>budget</div>
   </section>
   <section class="categories">
-    <app-category-list />
+    <app-category-list [categories]="this.categories()" (categoriesChanged)="categoryChanged()" />
   </section>
 </div>

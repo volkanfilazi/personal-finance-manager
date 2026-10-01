@@ -11,6 +11,7 @@ describe('Category dialog flow', () => {
   const category: Category = { id: '1', name: 'Food', type: 'Expense' };
   let fixture: ComponentFixture<CategoryList>;
   let request: Subject<Category>;
+  let categoriesChanged = vi.fn<() => void>();
   let service: {
     getAll: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
@@ -43,6 +44,9 @@ describe('Category dialog flow', () => {
       providers: [{ provide: CategoryService, useValue: service }],
     }).compileComponents();
     fixture = TestBed.createComponent(CategoryList);
+    fixture.componentRef.setInput('categories', [category]);
+    categoriesChanged = vi.fn();
+    fixture.componentInstance.categoriesChanged.subscribe(categoriesChanged);
     await fixture.whenStable();
   });
 
@@ -104,12 +108,15 @@ describe('Category dialog flow', () => {
         expect(modal.querySelector('fieldset')!.disabled).toBe(true);
         form().submit();
         expect(service[mode === 'create' ? 'create' : 'update']).toHaveBeenCalledTimes(1);
+        expect(categoriesChanged).not.toHaveBeenCalled();
         request.next({ ...category, name: 'Travel' });
         request.complete();
         await fixture.whenStable();
         expect(modal.open).toBe(false);
         expect(dialog('Confirmation Dialog').open).toBe(false);
         expect(form().hasChanges()).toBe(false);
+        expect(categoriesChanged).toHaveBeenCalledTimes(1);
+        expect(service.getAll).not.toHaveBeenCalled();
       });
 
       it('keeps changes after an API error and asks again before closing', async () => {
@@ -123,6 +130,7 @@ describe('Category dialog flow', () => {
         expect(modal.querySelector('input')!.value).toBe('Travel');
         expect(form().hasChanges()).toBe(true);
         expect(modal.textContent).toContain('Something went wrong. Please try again.');
+        expect(categoriesChanged).not.toHaveBeenCalled();
         await click(modal.querySelector('.dialog-close')!);
         expect(dialog('Confirmation Dialog').open).toBe(true);
       });
@@ -137,6 +145,7 @@ describe('Category dialog flow', () => {
         expect(modal.querySelector('input')!.value).toBe(original);
         expect(form().hasChanges()).toBe(false);
         expect(service[mode === 'create' ? 'create' : 'update']).not.toHaveBeenCalled();
+        expect(categoriesChanged).not.toHaveBeenCalled();
       });
 
       it('preserves invalid changes when confirmation Save is clicked', async () => {

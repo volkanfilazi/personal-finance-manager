@@ -1,0 +1,34 @@
+<app-dialog
+  #deleteDialog
+  title="Confirm deletion"
+  [hasChanges]="loading()"
+  (closed)="closed.emit()"
+>
+  <p>
+    Are you sure you want to delete
+    <strong>{{ itemName() }}</strong
+    >?
+  </p>
+  <p class="text-muted">This action cannot be undone.</p>
+  @if (error()) {
+    <p class="text-danger" role="alert">{{ error() }}</p>
+  }
+  <div class="dialog-actions d-flex flex-row justify-content-end w-100">
+    <button
+      type="button"
+      class="btn btn-light"
+      [disabled]="loading()"
+      (click)="deleteDialog.close()"
+    >
+      Cancel
+    </button>
+    <button type="button" class="btn btn-danger" [disabled]="loading()" (click)="confirmDelete()">
+      @if (loading()) {
+        <span class="spinner-border spinner-border-sm me-2"></span>
+        Deleting...
+      } @else {
+        Delete
+      }
+    </button>
+  </div>
+</app-dialog>
