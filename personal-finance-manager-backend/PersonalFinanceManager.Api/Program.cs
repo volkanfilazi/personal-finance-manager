@@ -2,6 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using PersonalFinanceManager.Api.Infrastructure.MongoDb;
 using PersonalFinanceManager.Api.Features.Categories;
+using PersonalFinanceManager.Api.Features.Transactions;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +53,7 @@ builder.Services.AddSingleton<IMongoDatabase>(serviceProvider =>
 });
 
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<TransactionService>();
 
 var app = builder.Build();
 

@@ -29,7 +29,7 @@ public class CategoriesController : ControllerBase
         {
             return Conflict(new ApiError(
                 ApiErrorCodes.CategoryAlreadyExists,
-                "A category with this name already exists."
+                ApiErrorMessages.CategoryAlreadyExists
                 ));
         }
 
@@ -111,7 +111,7 @@ public class CategoriesController : ControllerBase
         {
             return NotFound(new ApiError(
                 ApiErrorCodes.CategoryNotFound,
-                "Category not found."
+                ApiErrorMessages.CategoryNotFound
             ));
         }
 

@@ -1,0 +1,8 @@
+<app-dialog title="Confirmation Dialog" (closed)="clearTarget()">
+  <p>Would you like to save your changes before leaving?</p>
+  <div class="d-flex justify-content-end gap-1">
+    <button type="button" class="btn" (click)="dialog().close()">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="saveChanges()">Save</button>
+    <button type="button" class="btn btn-danger" (click)="discardChanges()">Discard</button>
+  </div>
+</app-dialog>

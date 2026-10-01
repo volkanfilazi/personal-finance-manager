@@ -4,7 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CategoryService } from '../category.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../../core/api/api-error.model';
-import { finalize } from 'rxjs';
+import { finalize, map } from 'rxjs';
 import { Category } from '../category.model';
 
 @Component({
@@ -19,24 +19,29 @@ export class CategoryForm {
 
   readonly saved = output<void>();
   readonly updateForm = input<Category | null>(null);
-  
+
   protected readonly form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.maxLength(50)]],
     type: ['Expense' as 'Income' | 'Expense', Validators.required],
   });
 
-  private readonly initialValue = signal({ name: '', type: 'Expense' as 'Income' | 'Expense' });
-  private readonly currentValue = toSignal(this.form.valueChanges, {
-    initialValue: this.form.getRawValue(),
-  });
+  readonly loading = signal(false);
+  protected responseError = signal<string>('');
+  private readonly initialValue = signal(this.form.getRawValue());
+
+  private readonly currentValue = toSignal(
+    this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
+    { initialValue: this.form.getRawValue() },
+  );
+
   readonly hasChanges = computed(() => {
     const current = this.currentValue();
     const initial = this.initialValue();
-    return current.name !== initial.name || current.type !== initial.type;
-  });
 
-  readonly loading = signal(false);
-  protected responseError = signal<string>('');
+    return (Object.keys(initial) as Array<keyof typeof initial>).some(
+      (key) => current[key] !== initial[key],
+    );
+  });
 
   constructor() {
     effect(() => {
@@ -50,10 +55,13 @@ export class CategoryForm {
   }
 
   submit(): void {
-    if (this.loading()) return;
+    if (this.loading()) {
+      return;
+    }
 
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      
       return;
     }
 
@@ -93,7 +101,12 @@ export class CategoryForm {
 
   reset(): void {
     const category = this.updateForm();
-    const initial = { name: category?.name ?? '', type: category?.type ?? 'Expense' };
+
+    const initial = {
+      name: category?.name ?? '',
+      type: category?.type ?? 'Expense',
+    };
+
     this.initialValue.set(initial);
     this.form.reset(initial);
     this.responseError.set('');

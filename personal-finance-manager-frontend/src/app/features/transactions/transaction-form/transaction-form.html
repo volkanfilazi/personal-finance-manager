@@ -1,0 +1,72 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <fieldset [disabled]="loading()" class="border-0 p-0">
+    <div class="form-field">
+      <label for="transaction-name" class="form-label"> Description </label>
+      <textarea
+        id="transaction-name"
+        type="text"
+        class="form-control"
+        formControlName="description"
+      ></textarea>
+      <div class="field-error">
+        @if (form.controls.description.touched && form.controls.description.hasError('required')) {
+          Description is required.
+        } @else if (
+          form.controls.description.touched && form.controls.description.hasError('maxlength')
+        ) {
+          Maximum 200 characters.
+        }
+      </div>
+
+      <label for="transaction-amount" class="form-label"> Amount </label>
+      <input id="transaction-amount" type="number" min="0.1" step="any" class="form-control" formControlName="amount" />
+      <div class="field-error">
+        @if (form.controls.amount.touched && form.controls.amount.hasError('required')) {
+          Amount is required.
+        } @else if (form.controls.amount.touched && form.controls.amount.hasError('min')) {
+          Minimum amount is 0.1.
+        }
+      </div>
+
+      <label for="transaction-date" class="form-label"> Date </label>
+      <input id="transaction-date" type="date" class="form-control" formControlName="date" />
+      <div class="field-error">
+        @if (form.controls.date.touched && form.controls.date.hasError('required')) {
+          Date is required.
+        }
+      </div>
+
+      <label for="transaction-category" class="form-label"> Category </label>
+
+      <select id="transaction-category" formControlName="categoryId" class="form-select">
+        @for (category of categories(); track category.id) {
+          <option [value]="category.id">{{ category.name }}</option>
+        }
+      </select>
+      <div class="field-error">
+        @if (form.controls.categoryId.touched && form.controls.categoryId.hasError('required')) {
+          Category is required.
+        }
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">
+        @if (loading()) {
+          <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+          Saving...
+        } @else {
+          @if (this.updateForm()) {
+            Save
+          } @else {
+            Add transaction
+          }
+        }
+      </button>
+    </div>
+
+    @if (responseError()) {
+      <p class="text-danger" role="alert">{{ responseError() }}</p>
+    }
+  </fieldset>
+</form>
