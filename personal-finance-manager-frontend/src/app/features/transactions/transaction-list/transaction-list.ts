@@ -14,7 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { finalize, Subscription } from 'rxjs';
 import { TransactionService } from '../transaction.service';
 import { Transaction, TransactionTotalsState } from '../transaction.model';
-import { DatePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Dialog } from '../../../shared/dialogs/dialog/dialog';
 import { TransactionForm } from '../transaction-form/transaction-form';
 import { Category, CategoryType } from '../../categories/category.model';
@@ -30,6 +30,7 @@ import { TextButton } from '../../../shared/buttons/text-button/text-button';
   styleUrl: './transaction-list.scss',
   imports: [
     DatePipe,
+    CurrencyPipe,
     Dialog,
     TransactionForm,
     IconButton,
@@ -90,12 +91,12 @@ export class TransactionList implements OnChanges {
           let incomes = 0;
           transactions.forEach((item) => {
             if (item.category.type === this.categoryType.Expense) {
-              expenses += item.amount;
+              expenses += Math.round(item.amount * 100);
             } else {
-              incomes += item.amount;
+              incomes += Math.round(item.amount * 100);
             }
           });
-          this.totalsChanged.emit({ status: 'ready', expenses, income: incomes });
+          this.totalsChanged.emit({ status: 'ready', expenses: expenses / 100, income: incomes / 100 });
           this.transactionsLoaded.emit(transactions);
         },
         error: () => {

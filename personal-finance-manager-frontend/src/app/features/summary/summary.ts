@@ -13,7 +13,9 @@ export class SummaryList {
   readonly transactionListRefresh = output<void>();
   protected readonly balance = computed(() => {
     const totals = this.totals();
-    return totals.status === 'ready' ? totals.income - totals.expenses : null;
+    return totals.status === 'ready'
+      ? (Math.round(totals.income * 100) - Math.round(totals.expenses * 100)) / 100
+      : null;
   });
 
   refreshTransactionList() {

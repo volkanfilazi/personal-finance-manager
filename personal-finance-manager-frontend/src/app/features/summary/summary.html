@@ -7,15 +7,15 @@
   <div class="totals-grid">
     <div class="total-card">
       <h2>Total income</h2>
-      <p>{{ summary.status === 'ready' ? (summary.income | currency: 'EUR') : '—' }}</p>
+      <p>{{ summary.status === 'ready' ? (summary.income | currency: 'EUR' : 'symbol' : '1.2-2') : '—' }}</p>
     </div>
     <div class="total-card">
       <h2>Total expenses</h2>
-      <p>{{ summary.status === 'ready' ? (summary.expenses | currency: 'EUR') : '—' }}</p>
+      <p>{{ summary.status === 'ready' ? (summary.expenses | currency: 'EUR' : 'symbol' : '1.2-2') : '—' }}</p>
     </div>
     <div class="total-card">
       <h2>Balance</h2>
-      <p>{{ summary.status === 'ready' ? (balance() | currency: 'EUR') : '—' }}</p>
+      <p>{{ summary.status === 'ready' ? (balance() | currency: 'EUR' : 'symbol' : '1.2-2') : '—' }}</p>
     </div>
   </div>
   @if (summary.status === 'loading') {

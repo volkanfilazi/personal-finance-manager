@@ -14,7 +14,7 @@
         label="Amount"
         type="number"
         [min]="0.01"
-        step="any"
+        [step]="0.01"
         [control]="form.controls.amount"
         [error]="
           !form.controls.amount.touched
@@ -23,7 +23,9 @@
               ? 'Amount is required.'
               : form.controls.amount.hasError('min')
                 ? 'Minimum amount is 0.01.'
-                : ''
+                : form.controls.amount.hasError('pattern')
+                  ? 'Use at most two decimal places.'
+                  : ''
         "
       />
 
