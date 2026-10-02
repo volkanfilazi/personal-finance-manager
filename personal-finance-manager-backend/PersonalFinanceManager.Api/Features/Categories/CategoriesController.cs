@@ -95,11 +95,22 @@ public class CategoriesController : ControllerBase
             Type = dto.Type
         };
 
-        var updated = await _categoryService.UpdateAsync(category);
+        var result = await _categoryService.UpdateAsync(category);
 
-        if (!updated)
+        if (result.Status == UpdateCategoryStatus.Duplicate)
         {
-            return NotFound();
+            return Conflict(new ApiError(
+                ApiErrorCodes.CategoryAlreadyExists,
+                ApiErrorMessages.CategoryAlreadyExists
+                ));
+        }
+
+        if (result.Status == UpdateCategoryStatus.CategoryNotFound)
+        {
+            return NotFound(new ApiError(
+                ApiErrorCodes.CategoryNotFound,
+                ApiErrorMessages.CategoryNotFound
+                ));
         }
 
         return NoContent();
