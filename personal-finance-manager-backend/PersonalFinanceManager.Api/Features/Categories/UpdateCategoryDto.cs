@@ -9,3 +9,15 @@ public class UpdateCategoryDto
     public string Name { get; set; } = string.Empty;
     public CategoryType Type { get; set; }
 }
+
+public enum UpdateCategoryStatus
+{
+    Updated,
+    Duplicate,
+    CategoryNotFound
+}
+
+public class UpdateCategoryResult
+{
+    public UpdateCategoryStatus Status { get; init; }
+}

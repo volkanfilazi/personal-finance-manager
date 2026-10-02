@@ -48,13 +48,36 @@ public class CategoryService
             .ToListAsync();
     }
 
-    public async Task<bool> UpdateAsync(Category category)
+    public async Task<UpdateCategoryResult> UpdateAsync(Category category)
     {
+        var exist = await _categories
+            .Find(x => x.Id != category.Id && x.Name == category.Name && !x.IsDeleted)
+            .AnyAsync();
+
+        if (exist)
+        {
+            return new UpdateCategoryResult
+            {
+                Status = UpdateCategoryStatus.Duplicate
+            };
+        }
+
         var result = await _categories.ReplaceOneAsync(
             existingCategory => existingCategory.Id == category.Id && !existingCategory.IsDeleted,
             category);
 
-        return result.MatchedCount > 0;
+        if (result.MatchedCount <= 0)
+        {
+            return new UpdateCategoryResult
+            {
+                Status = UpdateCategoryStatus.CategoryNotFound
+            };
+        }
+
+        return new UpdateCategoryResult
+        {
+            Status = UpdateCategoryStatus.Updated
+        };
     }
 
     public async Task<bool> DeleteAsync(string id)
