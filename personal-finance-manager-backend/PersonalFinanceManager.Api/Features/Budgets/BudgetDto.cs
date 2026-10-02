@@ -15,7 +15,8 @@ public class BudgetDto
 public enum GetBudgetStatus
 {
     Ok,
-    BudgetNotFound
+    BudgetNotFound,
+    CategoryNotFound
 }
 
 public class GetBudgetResult

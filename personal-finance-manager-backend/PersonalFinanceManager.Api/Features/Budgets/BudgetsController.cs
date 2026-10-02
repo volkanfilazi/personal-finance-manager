@@ -91,16 +91,16 @@ public class BudgetsController : ControllerBase
                 ));
         }
 
-        var budget = result.Budget;
-        var category = result.Category;
-
-        if (category is null)
+        if (result.Status == GetBudgetStatus.CategoryNotFound || result.Category is null)
         {
             return NotFound(new ApiError(
                 ApiErrorCodes.CategoryNotFound,
                 ApiErrorMessages.CategoryNotFound
-            ));
+                ));
         }
+
+        var budget = result.Budget;
+        var category = result.Category;
 
         var budgetDto = new BudgetDto
         {
