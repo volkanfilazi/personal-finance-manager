@@ -82,6 +82,15 @@ public class BudgetService
             .Find(c => c.Id == budget.CategoryId)
             .FirstOrDefaultAsync();
 
+        if (category is null)
+        {
+            return new GetBudgetResult
+            {
+                Status = GetBudgetStatus.CategoryNotFound,
+                Budget = budget
+            };
+        }
+
         return new GetBudgetResult
         {
             Status = GetBudgetStatus.Ok,
