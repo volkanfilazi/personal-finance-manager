@@ -9,6 +9,7 @@ export interface Category {
   id: string;
   name: string;
   type: CategoryType;
+  isDeleted?: boolean;
 }
 
 export interface CreateCategory {

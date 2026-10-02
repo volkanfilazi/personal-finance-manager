@@ -1,4 +1,13 @@
-import { Component, computed, effect, inject, input, output, signal, untracked } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../../core/api/api-error.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -28,18 +37,38 @@ export class BudgetForm {
   readonly updateForm = input<Budget | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01), currencyPrecision]),
+    amount: this.fb.control<number | null>(null, [
+      Validators.required,
+      Validators.min(0.01),
+      currencyPrecision,
+    ]),
     categoryId: ['', Validators.required],
     monthYear: ['', Validators.required],
   });
 
   categories = input<Category[]>([]);
   protected readonly expenseCategories = computed(() =>
-    this.categories().filter(category => category.type === CategoryType.Expense),
+    this.categories().filter(
+      (category) => category.type === CategoryType.Expense && !category.isDeleted,
+    ),
   );
-  protected readonly categoryOptions = computed(() =>
-    this.expenseCategories().map(category => ({ value: category.id, label: category.name })),
-  );
+  protected readonly categoryOptions = computed(() => {
+    const options = this.expenseCategories().map((category) => ({
+      value: category.id,
+      label: category.name,
+      disabled: false,
+    }));
+    const current = this.updateForm()?.category;
+    if (current && !options.some((option) => option.value === current.id)) {
+      options.unshift({
+        value: current.id,
+        label: `${current.name} (${current.isDeleted ? 'deleted' : 'inactive'})`,
+        disabled: true,
+      });
+    }
+    
+    return options;
+  });
 
   private readonly initialValue = signal(this.form.getRawValue());
 
@@ -67,10 +96,10 @@ export class BudgetForm {
       const categories = this.expenseCategories();
       const control = this.form.controls.categoryId;
 
-      if (!this.updateForm() && !categories.some(category => category.id === control.value)) {
+      if (!this.updateForm() && !categories.some((category) => category.id === control.value)) {
         const categoryId = categories[0]?.id ?? '';
         control.setValue(categoryId);
-        this.initialValue.update(initial => ({ ...initial, categoryId }));
+        this.initialValue.update((initial) => ({ ...initial, categoryId }));
       }
     });
   }

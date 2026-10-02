@@ -47,9 +47,20 @@ export class TransactionForm {
   });
 
   categories = input<Category[]>([]);
-  protected readonly categoryOptions = computed(() =>
-    this.categories().map(category => ({ value: category.id, label: category.name })),
-  );
+  protected readonly categoryOptions = computed(() => {
+    const options = this.categories()
+      .filter(category => !category.isDeleted)
+      .map(category => ({ value: category.id, label: category.name, disabled: false }));
+    const current = this.updateForm()?.category;
+    if (current && !options.some(option => option.value === current.id)) {
+      options.unshift({
+        value: current.id,
+        label: `${current.name} (${current.isDeleted ? 'deleted' : 'inactive'})`,
+        disabled: true,
+      });
+    }
+    return options;
+  });
 
   private readonly initialValue = signal(this.form.getRawValue());
 
