@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceManager.Api.Infrastructure.Http;
 using PersonalFinanceManager.Api.Features.Categories;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 
 namespace PersonalFinanceManager.Api.Features.Transactions;
 
@@ -19,6 +20,14 @@ public class TransactionsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<TransactionDto>> Create(CreateTransactionDto dto)
     {
+        if (!ObjectId.TryParse(dto.CategoryId, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var transaction = new Transaction
         {
             Description = dto.Description,
@@ -64,6 +73,14 @@ public class TransactionsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<TransactionDto>> GetById(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var result = await _transactionService.GetByIdAsync(id);
 
         if (result.Status == GetTransactionStatus.TransactionNotFound)
@@ -133,6 +150,22 @@ public class TransactionsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(string id, UpdateTransactionDto dto)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
+        if (!ObjectId.TryParse(dto.CategoryId, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var transaction = new Transaction
         {
             Id = id,
@@ -166,6 +199,14 @@ public class TransactionsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var deleted = await _transactionService.DeleteAsync(id);
 
         if (!deleted)

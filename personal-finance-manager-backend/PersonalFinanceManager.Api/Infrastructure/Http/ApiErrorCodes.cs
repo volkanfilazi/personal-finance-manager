@@ -8,6 +8,7 @@ public static class ApiErrorCodes
     public const string CategoryNotEligible = "CATEGORY_NOT_ELIGIBLE";
     public const string BudgetAlreadyExists = "BUDGET_ALREADY_EXIST";
     public const string BudgetNotFound = "BUDGET_NOT_FOUND";
+    public const string InvalidId = "INVALID_ID";
 }
 
 public static class ApiErrorMessages
@@ -18,4 +19,5 @@ public static class ApiErrorMessages
     public const string CategoryNotEligible = "Category not eligible.";
     public const string BudgetAlreadyExists = "Budget already exist.";
     public const string BudgetNotFound = "Budget not found.";
+    public const string InvalidId = "Invalid ID format.";
 }

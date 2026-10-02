@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceManager.Api.Infrastructure.Http;
+using MongoDB.Bson;
 
 namespace PersonalFinanceManager.Api.Features.Categories;
 
@@ -50,6 +51,14 @@ public class CategoriesController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CategoryDto>> GetById(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var category = await _categoryService.GetByIdAsync(id);
 
         if (category is null)
@@ -88,6 +97,14 @@ public class CategoriesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult> Update(string id, UpdateCategoryDto dto)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var category = new Category
         {
             Id = id,
@@ -119,6 +136,14 @@ public class CategoriesController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<ActionResult> Delete(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var deleted = await _categoryService.DeleteAsync(id);
 
         if (!deleted)
