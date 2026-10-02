@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { CreateTransaction, Transaction, UpdateTransaction } from './transaction.model';
+import { API_BASE_URL } from '../../core/api/api.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransactionService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5271/api/transactions';
+  private readonly apiUrl = `${API_BASE_URL}/transactions`;
 
   getAll(year: number, month: number): Observable<Transaction[]> {
     return this.http.get<Transaction[]>(this.apiUrl, {
