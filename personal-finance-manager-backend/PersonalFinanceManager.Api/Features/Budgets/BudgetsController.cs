@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceManager.Api.Infrastructure.Http;
 using PersonalFinanceManager.Api.Features.Categories;
 using System.ComponentModel.DataAnnotations;
+using MongoDB.Bson;
 
 namespace PersonalFinanceManager.Api.Features.Budgets;
 
@@ -19,6 +20,14 @@ public class BudgetsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<BudgetDto>> Create(CreateBudgetDto dto)
     {
+        if (!ObjectId.TryParse(dto.CategoryId, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var budget = new Budget
         {
             CategoryId = dto.CategoryId,
@@ -81,6 +90,14 @@ public class BudgetsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<BudgetDto>> GetById(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var result = await _budgetService.GetByIdAsync(id);
 
         if (result.Status == GetBudgetStatus.BudgetNotFound || result.Budget is null)
@@ -154,6 +171,14 @@ public class BudgetsController : ControllerBase
     string id,
     UpdateBudgetDto dto)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var updated = await _budgetService.UpdateAsync(
             id,
             dto.Amount);
@@ -172,6 +197,14 @@ public class BudgetsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id)
     {
+        if (!ObjectId.TryParse(id, out _))
+        {
+            return BadRequest(new ApiError(
+                ApiErrorCodes.InvalidId,
+                ApiErrorMessages.InvalidId
+            ));
+        }
+
         var result = await _budgetService.DeleteAsync(id);
 
         if (!result)
