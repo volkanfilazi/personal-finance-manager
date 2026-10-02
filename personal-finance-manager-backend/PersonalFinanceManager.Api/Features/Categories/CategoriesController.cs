@@ -37,7 +37,8 @@ public class CategoriesController : ControllerBase
         {
             Id = category.Id,
             Name = category.Name,
-            Type = category.Type
+            Type = category.Type,
+            IsDeleted = category.IsDeleted
         };
 
         return CreatedAtAction(
@@ -60,7 +61,8 @@ public class CategoriesController : ControllerBase
         {
             Id = category.Id,
             Name = category.Name,
-            Type = category.Type
+            Type = category.Type,
+            IsDeleted = category.IsDeleted
         };
 
         return Ok(response);
@@ -76,7 +78,8 @@ public class CategoriesController : ControllerBase
             {
                 Id = category.Id,
                 Name = category.Name,
-                Type = category.Type
+                Type = category.Type,
+                IsDeleted = category.IsDeleted
             }).ToList();
 
         return Ok(response);

@@ -49,7 +49,8 @@ public class TransactionsController : ControllerBase
             {
                 Id = category.Id,
                 Name = category.Name,
-                Type = category.Type
+                Type = category.Type,
+                IsDeleted = category.IsDeleted
             }
         };
 
@@ -101,7 +102,8 @@ public class TransactionsController : ControllerBase
             {
                 Id = foundCategory.Id,
                 Name = foundCategory.Name,
-                Type = foundCategory.Type
+                Type = foundCategory.Type,
+                IsDeleted = foundCategory.IsDeleted
             }
         };
 
@@ -126,7 +128,8 @@ public class TransactionsController : ControllerBase
                 {
                     Id = result.Category.Id,
                     Name = result.Category.Name,
-                    Type = result.Category.Type
+                    Type = result.Category.Type,
+                    IsDeleted = result.Category.IsDeleted
                 }
             })
             .ToList();

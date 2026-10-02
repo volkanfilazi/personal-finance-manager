@@ -65,7 +65,8 @@ public class BudgetsController : ControllerBase
             {
                 Id = category.Id,
                 Name = category.Name,
-                Type = category.Type
+                Type = category.Type,
+                IsDeleted = category.IsDeleted
             },
             Spent = 0
         };
@@ -102,7 +103,8 @@ public class BudgetsController : ControllerBase
             {
                Id = category.Id,
                Name = category.Name,
-               Type = category.Type
+               Type = category.Type,
+               IsDeleted = category.IsDeleted
             },
             Spent = 0
         };
@@ -128,7 +130,8 @@ public class BudgetsController : ControllerBase
                 {
                     Id = result.Category.Id,
                     Name = result.Category.Name,
-                    Type = result.Category.Type
+                    Type = result.Category.Type,
+                    IsDeleted = result.Category.IsDeleted
                 },
                 Spent = result.Spent
             })

@@ -11,6 +11,6 @@ export class Select<T extends string> {
   readonly inputId = input.required<string>();
   readonly label = input.required<string>();
   readonly control = input.required<FormControl<T>>();
-  readonly options = input.required<ReadonlyArray<{ value: T; label: string }>>();
+  readonly options = input.required<ReadonlyArray<{ value: T; label: string; disabled?: boolean }>>();
   readonly error = input('');
 }
