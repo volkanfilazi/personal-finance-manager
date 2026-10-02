@@ -24,4 +24,5 @@ public class GetBudgetResult
     public GetBudgetStatus Status { get; init; }
     public Budget? Budget { get; init; }
     public Category? Category { get; init; }
+    public decimal Spent { get; init; }
 }
