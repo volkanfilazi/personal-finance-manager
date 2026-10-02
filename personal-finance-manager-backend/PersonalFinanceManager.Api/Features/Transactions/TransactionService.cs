@@ -97,16 +97,21 @@ public class TransactionService
             .Find(categoryFilter)
             .ToListAsync();
 
-        return transactions.Select(transaction =>
-        {
-            var category = categories
-            .FirstOrDefault(x => x.Id == transaction.CategoryId);
-            return new TransactionWithCategory
-        {
-            Category = category,
-            Transaction = transaction
-        };
-        }).ToList();
+        return transactions
+            .Select(transaction =>
+            {
+                var category = categories
+                .FirstOrDefault(x => x.Id == transaction.CategoryId)
+                ?? throw new InvalidOperationException(
+                    $"Category not found for transaction {transaction.Id}.");
+                
+                return new TransactionWithCategory
+                {
+                    Category = category,
+                    Transaction = transaction
+                };
+            })
+            .ToList();
     }
 
     public async Task<UpdateTransactionResult> UpdateAsync(Transaction transaction)

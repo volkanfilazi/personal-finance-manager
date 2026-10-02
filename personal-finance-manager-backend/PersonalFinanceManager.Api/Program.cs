@@ -71,7 +71,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    // HTTPS redirection is disabled for local HTTP development -> it will fix warning problem
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("Frontend");
 
