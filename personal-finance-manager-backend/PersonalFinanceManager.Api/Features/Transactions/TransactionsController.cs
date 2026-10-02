@@ -66,14 +66,6 @@ public class TransactionsController : ControllerBase
     {
         var result = await _transactionService.GetByIdAsync(id);
 
-        if (result == null)
-        {
-            return NotFound(new ApiError(
-                ApiErrorCodes.TransactionNotFound,
-                ApiErrorMessages.TransactionNotFound
-                ));
-        }
-
         if (result.Status == GetTransactionStatus.TransactionNotFound)
         {
             return NotFound(new ApiError(
