@@ -28,6 +28,11 @@ The ASP.NET Core API separates request/response DTOs from MongoDB persistence
 models. Categories are soft-deleted so historical transactions can continue
 to resolve their category after a category is removed from active use.
 
+### Quality checks
+
+- axe DevTools (WCAG 2.1 AA): 0 automatically detected issues
+- Lighthouse: Accessibility 100, Best Practices 100
+
 ## 1. Start MongoDB
 
 The default connection is `mongodb://localhost:27017` and the database name is `PersonalFinanceManager`.
@@ -91,7 +96,7 @@ npm run build
 npm test -- --watch=false
 ```
 
-The frontend build is written to `dist/personal-finance-manager-frontend`. The production initial bundle is approximately 466 kB, below the unchanged 500 kB warning threshold. Bootstrap styles are limited to the components used by the application in `src/styles/_bootstrap.scss`; layout utilities are retained. This reduces global CSS from approximately 235 kB to 109 kB. Bootstrap 5.3 uses Sass `@import`, so that specific deprecation warning is suppressed in `angular.json` until Bootstrap supports the Sass module system.
+The frontend build is written to `dist/personal-finance-manager-frontend`. The production initial bundle is approximately 468 kB, below the unchanged 500 kB warning threshold. Bootstrap styles are limited to the components used by the application in `src/styles/_bootstrap.scss`; layout utilities are retained. This reduces global CSS from approximately 235 kB to 109 kB. Bootstrap 5.3 uses Sass `@import`, so that specific deprecation warning is suppressed in `angular.json` until Bootstrap supports the Sass module system.
 
 From `personal-finance-manager-backend/PersonalFinanceManager.Api`:
 

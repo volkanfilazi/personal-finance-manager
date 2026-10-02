@@ -1,0 +1,53 @@
+.budget-item {
+  min-width: 0;
+  padding-bottom: 20px;
+
+  + .budget-item {
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+}
+
+.budget-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.category-name {
+  min-width: 0;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.budget-amounts {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-bottom: 10px;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.spent {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.progress {
+  height: 8px;
+  border-radius: 4px;
+}
+
+.over-budget {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--color-danger);
+}

@@ -19,6 +19,7 @@ import { Category, CategoryType } from '../../categories/category.model';
 import { Input } from '../../../shared/form-elements/input/input';
 import { Select } from '../../../shared/form-elements/select/select';
 import { currencyPrecision } from '../../../shared/validators/currency-precision';
+import { MIN_MONTH, MAX_MONTH, supportedDate } from '../../../shared/validators/supported-date';
 
 let nextFormId = 0;
 
@@ -28,6 +29,8 @@ let nextFormId = 0;
   templateUrl: './budget-form.html',
 })
 export class BudgetForm {
+  protected readonly minMonth = MIN_MONTH;
+  protected readonly maxMonth = MAX_MONTH;
   protected readonly formId = 'budget-' + nextFormId++;
   private readonly fb = inject(FormBuilder);
   private readonly budgetService = inject(BudgetService);
@@ -43,7 +46,7 @@ export class BudgetForm {
       currencyPrecision,
     ]),
     categoryId: ['', Validators.required],
-    monthYear: ['', Validators.required],
+    monthYear: ['', [Validators.required, supportedDate]],
   });
 
   categories = input<Category[]>([]);
@@ -66,7 +69,7 @@ export class BudgetForm {
         disabled: true,
       });
     }
-    
+
     return options;
   });
 
@@ -157,7 +160,12 @@ export class BudgetForm {
       },
       error: (error: HttpErrorResponse) => {
         const apiError = error.error as ApiError | null;
-        this.responseError.set(apiError?.message ?? 'Budget could not be saved. Please try again.');
+        const validationMessage = Object.values(apiError?.errors ?? {})
+          .flat()
+          .join(' ');
+        this.responseError.set(
+          apiError?.message || validationMessage || 'Budget could not be saved. Please try again.',
+        );
       },
     });
   }

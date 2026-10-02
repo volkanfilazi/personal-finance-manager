@@ -41,8 +41,8 @@ thead th {
 }
 
 .category-text {
+  margin-bottom: 4px;
   display: block;
-  width: clamp(7rem, 10vw, 12rem);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

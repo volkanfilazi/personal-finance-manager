@@ -4,6 +4,7 @@
       [id]="inputId()"
       type="number"
       [attr.min]="min()"
+      [attr.max]="max()"
       [attr.step]="step()"
       class="form-control"
       [formControl]="control()"
@@ -11,15 +12,16 @@
       [attr.aria-describedby]="error() ? inputId() + '-error' : null"
     />
   } @else {
-  <input
-    [id]="inputId()"
-    [type]="type()"
-    [attr.min]="min()"
-    [attr.step]="step()"
-    class="form-control"
-    [formControl]="control()"
-    [attr.aria-invalid]="error() ? 'true' : null"
-    [attr.aria-describedby]="error() ? inputId() + '-error' : null"
-  />
+    <input
+      [id]="inputId()"
+      [type]="type()"
+      [attr.min]="min()"
+      [attr.max]="max()"
+      [attr.step]="step()"
+      class="form-control"
+      [formControl]="control()"
+      [attr.aria-invalid]="error() ? 'true' : null"
+      [attr.aria-describedby]="error() ? inputId() + '-error' : null"
+    />
   }
 </app-form-field>

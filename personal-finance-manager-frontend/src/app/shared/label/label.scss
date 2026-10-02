@@ -1,0 +1,23 @@
+:host {
+  display: inline-flex;
+  flex-shrink: 0;
+  min-width: max-content;
+  vertical-align: middle;
+}
+
+.label {
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+
+  &.danger {
+    background: var(--color-danger-soft);
+    color: var(--color-danger);
+  }
+}

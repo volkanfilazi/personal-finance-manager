@@ -23,12 +23,14 @@ import { IconButton } from '../../../shared/buttons/icon-button/icon-button';
 import { SaveChangesDialog } from '../../../shared/dialogs/save-changes-dialog/save-changes-dialog';
 import { ApiError } from '../../../core/api/api-error.model';
 import { TextButton } from '../../../shared/buttons/text-button/text-button';
+import { Label } from '../../../shared/label/label';
 
 @Component({
   selector: 'app-transaction-list',
   templateUrl: './transaction-list.html',
   styleUrl: './transaction-list.scss',
   imports: [
+    Label,
     DatePipe,
     CurrencyPipe,
     Dialog,
@@ -96,7 +98,11 @@ export class TransactionList implements OnChanges {
               incomes += Math.round(item.amount * 100);
             }
           });
-          this.totalsChanged.emit({ status: 'ready', expenses: expenses / 100, income: incomes / 100 });
+          this.totalsChanged.emit({
+            status: 'ready',
+            expenses: expenses / 100,
+            income: incomes / 100,
+          });
           this.transactionsLoaded.emit(transactions);
         },
         error: () => {

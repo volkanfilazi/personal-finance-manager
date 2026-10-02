@@ -33,13 +33,17 @@
         [inputId]="formId + '-date'"
         label="Date"
         type="date"
+        [min]="minDate"
+        [max]="maxDate"
         [control]="form.controls.date"
         [error]="
           !form.controls.date.touched
             ? ''
             : form.controls.date.hasError('required')
               ? 'Date is required.'
-              : ''
+              : form.controls.date.hasError('supportedDate')
+                ? 'Choose a valid date between 2000 and 2100.'
+                : ''
         "
       />
 
