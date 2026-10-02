@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PersonalFinanceManager.Api.Infrastructure.Http;
 using PersonalFinanceManager.Api.Features.Categories;
+using System.ComponentModel.DataAnnotations;
 
 namespace PersonalFinanceManager.Api.Features.Budgets;
 
@@ -114,8 +115,8 @@ public class BudgetsController : ControllerBase
 
     [HttpGet]
     public async Task<ActionResult<List<BudgetDto>>> GetAll(
-    int year,
-    int month)
+    [FromQuery, Range(2000, 2100)] int year,
+    [FromQuery, Range(1, 12)] int month)
     {
         var results = await _budgetService.GetAllAsync(year, month);
 
