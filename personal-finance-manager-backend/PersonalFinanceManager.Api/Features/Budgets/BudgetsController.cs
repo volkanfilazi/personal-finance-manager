@@ -83,7 +83,7 @@ public class BudgetsController : ControllerBase
     {
         var result = await _budgetService.GetByIdAsync(id);
 
-        if (result.Status == GetBudgetStatus.BudgetNotFound)
+        if (result.Status == GetBudgetStatus.BudgetNotFound || result.Budget is null)
         {
             return NotFound(new ApiError(
                 ApiErrorCodes.BudgetNotFound,
@@ -93,6 +93,14 @@ public class BudgetsController : ControllerBase
 
         var budget = result.Budget;
         var category = result.Category;
+
+        if (category is null)
+        {
+            return NotFound(new ApiError(
+                ApiErrorCodes.CategoryNotFound,
+                ApiErrorMessages.CategoryNotFound
+            ));
+        }
 
         var budgetDto = new BudgetDto
         {
