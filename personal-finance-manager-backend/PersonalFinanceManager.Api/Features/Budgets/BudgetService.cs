@@ -54,13 +54,16 @@ public class BudgetService
             };
         }
 
+        var spending = await GetSpendingAsync([category], budget.Year, budget.Month);
+
         await _budgets.InsertOneAsync(budget);
 
         return new CreateBudgetResult
         {
             Status = CreateBudgetStatus.Created,
             Budget = budget,
-            Category = category
+            Category = category,
+            Spent = spending.GetValueOrDefault(category.Id)
         };
     }
 
@@ -91,11 +94,14 @@ public class BudgetService
             };
         }
 
+        var spending = await GetSpendingAsync([category], budget.Year, budget.Month);
+
         return new GetBudgetResult
         {
             Status = GetBudgetStatus.Ok,
             Budget = budget,
-            Category = category
+            Category = category,
+            Spent = spending.GetValueOrDefault(category.Id)
         };
     }
 
@@ -125,6 +131,38 @@ public class BudgetService
             .Find(categoryFilter)
             .ToListAsync();
 
+        var spending = await GetSpendingAsync(categories, year, month);
+
+        return budgets
+            .Select(budget =>
+            {
+                var category = categories
+                    .First(category => category.Id == budget.CategoryId);
+
+                return new BudgetWithCategory
+                {
+                    Budget = budget,
+                    Category = category,
+                    Spent = spending.GetValueOrDefault(category.Id)
+                };
+            })
+            .ToList();
+    }
+
+    private async Task<Dictionary<string, decimal>> GetSpendingAsync(
+        IEnumerable<Category> categories, int year, int month)
+    {
+        var categoryIds = categories
+            .Where(category => category.Type == CategoryType.Expense)
+            .Select(category => category.Id)
+            .Distinct()
+            .ToList();
+
+        if (categoryIds.Count == 0)
+        {
+            return [];
+        }
+
         var startDate = new DateTime(year, month, 1);
         var endDate = startDate.AddMonths(1);
 
@@ -135,25 +173,12 @@ public class BudgetService
                 transaction.Date < endDate)
             .ToListAsync();
 
-        return budgets
-            .Select(budget =>
-            {
-                var category = categories
-                    .First(category => category.Id == budget.CategoryId);
-
-                var spent = transactions
-                    .Where(transaction =>
-                        transaction.CategoryId == budget.CategoryId)
-                    .Sum(transaction => decimal.Round(transaction.Amount, 2, MidpointRounding.AwayFromZero));
-
-                return new BudgetWithCategory
-                {
-                    Budget = budget,
-                    Category = category,
-                    Spent = spent
-                };
-            })
-            .ToList();
+        return transactions
+            .GroupBy(transaction => transaction.CategoryId)
+            .ToDictionary(
+                group => group.Key,
+                group => group.Sum(transaction =>
+                    decimal.Round(transaction.Amount, 2, MidpointRounding.AwayFromZero)));
     }
 
     public async Task<bool> UpdateAsync(string id, decimal amount)

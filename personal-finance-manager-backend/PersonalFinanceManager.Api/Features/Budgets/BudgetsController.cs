@@ -78,7 +78,7 @@ public class BudgetsController : ControllerBase
                 Type = category.Type,
                 IsDeleted = category.IsDeleted
             },
-            Spent = 0
+            Spent = result.Spent
         };
 
         return CreatedAtAction(
@@ -132,7 +132,7 @@ public class BudgetsController : ControllerBase
                Type = category.Type,
                IsDeleted = category.IsDeleted
             },
-            Spent = 0
+            Spent = result.Spent
         };
 
         return Ok(budgetDto);

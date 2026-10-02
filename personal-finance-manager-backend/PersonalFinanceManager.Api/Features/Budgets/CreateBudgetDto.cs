@@ -37,4 +37,5 @@ public class CreateBudgetResult
     public CreateBudgetStatus Status { get; init; }
     public Budget? Budget { get; init; }
     public Category? Category { get; init; }
+    public decimal Spent { get; init; }
 }
