@@ -39,7 +39,7 @@ public class TransactionService
         };
     }
 
-    public async Task<GetTransactionResult?> GetByIdAsync(string id)
+    public async Task<GetTransactionResult> GetByIdAsync(string id)
     {
         var transaction = await _transactions
             .Find(transaction => transaction.Id == id)
