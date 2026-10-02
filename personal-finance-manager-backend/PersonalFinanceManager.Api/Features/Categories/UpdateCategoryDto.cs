@@ -7,6 +7,8 @@ public class UpdateCategoryDto
     [Required]
     [MaxLength(50)]
     public string Name { get; set; } = string.Empty;
+
+    [EnumDataType(typeof(CategoryType))]
     public CategoryType Type { get; set; }
 }
 
