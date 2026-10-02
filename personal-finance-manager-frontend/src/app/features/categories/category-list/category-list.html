@@ -26,6 +26,10 @@
     </div>
   }
 
+  @if (showEmptyState() && categories().length === 0) {
+    <p class="text-muted">No categories yet. Add a category to get started.</p>
+  }
+
   <app-delete-confirmation-dialog
     #deleteDialog
     [itemName]="selectedCategory()?.name ?? ''"

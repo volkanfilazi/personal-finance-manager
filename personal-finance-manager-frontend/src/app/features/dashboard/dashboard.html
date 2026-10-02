@@ -58,7 +58,11 @@
       <p role="alert" class="text-danger">{{ categoriesError() }}</p>
       <app-text-button label="Retry" (click)="loadCategories()" />
     }
-    <app-category-list [categories]="this.categories()" (categoriesChanged)="categoryChanged()" />
+    <app-category-list
+      [categories]="this.categories()"
+      [showEmptyState]="!categoriesLoading() && !categoriesError()"
+      (categoriesChanged)="categoryChanged()"
+    />
   </section>
   <section class="list-card spending" aria-label="Spending by category" tabindex="0">
     <app-spending-by-category
