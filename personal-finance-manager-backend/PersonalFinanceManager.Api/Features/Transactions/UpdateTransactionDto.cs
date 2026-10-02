@@ -17,6 +17,11 @@ public class UpdateTransactionDto
     [CurrencyPrecision]
     public decimal Amount { get; set; }
 
+    [Range(
+    typeof(DateTime),
+    "2000-01-01",
+    "2100-12-31T23:59:59.9999999",
+    ParseLimitsInInvariantCulture = true)]
     public DateTime Date { get; set; }
 
     [Required]
