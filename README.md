@@ -74,7 +74,7 @@ npm start
 
 Open [the application](http://localhost:4200). A global Angular CLI installation is not needed.
 
-The frontend currently calls `http://localhost:5271/api`. If you change the backend port, update the URLs in the category, transaction and budget services. If you change the frontend origin, update the CORS configuration in the backend's `Program.cs`.
+The frontend API base URL is defined by `API_BASE_URL` in `personal-finance-manager-frontend/src/app/core/api/api.config.ts`. It defaults to `http://localhost:5271/api`, so local development needs no additional configuration. If you change the backend host or port, update this value. If you change the frontend origin, update the CORS configuration in the backend's `Program.cs`.
 
 ## First use
 
