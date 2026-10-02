@@ -2,7 +2,8 @@ import { Component, inject, input, OnInit, output, signal, viewChild } from '@an
 import { HttpErrorResponse } from '@angular/common/http';
 import { finalize } from 'rxjs';
 import { CategoryService } from '../category.service';
-import { Category } from '../category.model';
+import { Category, CategoryType } from '../category.model';
+import { Label } from '../../../shared/label/label';
 import { CategoryForm } from '../category-form/category-form';
 import { Dialog } from '../../../shared/dialogs/dialog/dialog';
 import { IconButton } from '../../../shared/buttons/icon-button/icon-button';
@@ -16,6 +17,7 @@ import { TextButton } from '../../../shared/buttons/text-button/text-button';
   templateUrl: './category-list.html',
   styleUrl: './category-list.scss',
   imports: [
+    Label,
     CategoryForm,
     Dialog,
     IconButton,
@@ -25,6 +27,7 @@ import { TextButton } from '../../../shared/buttons/text-button/text-button';
   ],
 })
 export class CategoryList {
+  protected readonly categoryType = CategoryType;
   private readonly categoryService = inject(CategoryService);
 
   protected readonly deleteDialog = viewChild.required<DeleteConfirmationDialog>('deleteDialog');

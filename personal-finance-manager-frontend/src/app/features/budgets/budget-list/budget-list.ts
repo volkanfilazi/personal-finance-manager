@@ -27,6 +27,7 @@ import { DecimalPipe } from '@angular/common';
 @Component({
   selector: 'app-budget-list',
   templateUrl: './budget-list.html',
+  styleUrl: './budget-list.scss',
   imports: [
     Dialog,
     BudgetForm,

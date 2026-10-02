@@ -1,13 +1,25 @@
 <header class="dashboard-header">
   <h1>Personal Finance Manager</h1>
   <nav class="month-navigation" aria-label="Select month">
-    <button type="button" class="month-arrow" aria-label="Previous month" (click)="changeMonth(-1)">
+    <button
+      type="button"
+      class="month-arrow"
+      aria-label="Previous month"
+      [disabled]="!canGoBack()"
+      (click)="changeMonth(-1)"
+    >
       ‹
     </button>
     <span class="selected-month" aria-live="polite" aria-atomic="true">{{
       selectedDate() | date: 'MMMM yyyy'
     }}</span>
-    <button type="button" class="month-arrow" aria-label="Next month" (click)="changeMonth(1)">
+    <button
+      type="button"
+      class="month-arrow"
+      aria-label="Next month"
+      [disabled]="!canGoForward()"
+      (click)="changeMonth(1)"
+    >
       ›
     </button>
   </nav>
@@ -48,7 +60,7 @@
     }
     <app-category-list [categories]="this.categories()" (categoriesChanged)="categoryChanged()" />
   </section>
-  <section class="list-card spending" aria-label="Spending by category">
+  <section class="list-card spending" aria-label="Spending by category" tabindex="0">
     <app-spending-by-category
       [transactions]="transactions()"
       [status]="totals().status"

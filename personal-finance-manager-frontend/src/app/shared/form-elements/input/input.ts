@@ -11,7 +11,8 @@ export class Input<T> {
   readonly inputId = input.required<string>();
   readonly label = input.required<string>();
   readonly type = input<'number' | 'text' | 'month' | 'date'>('text');
-  readonly min = input<number | null>(null);
+  readonly min = input<number | string | null>(null);
+  readonly max = input<number | string | null>(null);
   readonly step = input<number | 'any' | null>(null);
   readonly control = input.required<FormControl<T>>();
   readonly error = input('');

@@ -14,49 +14,54 @@
     <button type="button" class="btn btn-outline-primary" (click)="loadBudgets()">Retry</button>
   }
   @for (budget of budgets(); track budget.id) {
-    <div class="d-flex flex-row justify-content-between align-items-center">
-      <div class="w-100">
-        <div>{{ budget.category.name }}</div>
-        <div class="d-flex flex-row gap-1">
-          <span>{{ budget.spent | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-          <span>spent of</span>
-          <span>{{ budget.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
-        </div>
+    @let percent = budget.amount > 0 ? (budget.spent / budget.amount) * 100 : 0;
 
-        @let percent = budget.amount > 0 ? (budget.spent / budget.amount) * 100 : 0;
-
-        <div class="d-flex align-items-center gap-2">
-          <div
-            class="progress flex-grow-1"
-            role="progressbar"
-            [attr.aria-label]="budget.category.name + ' budget usage'"
-            [attr.aria-valuenow]="percent > 100 ? 100 : percent"
-            aria-valuemin="0"
-            aria-valuemax="100"
-          >
-            <div
-              class="progress-bar"
-              [class.is-over-budget]="percent > 100"
-              [style.width.%]="percent > 100 ? 100 : percent"
-            ></div>
-          </div>
-
-          <span>{{ percent | number: '1.0-0' }}%</span>
+    <div class="budget-item">
+      <div class="budget-heading">
+        <span class="category-name" [title]="budget.category.name">{{ budget.category.name }}</span>
+        <div class="actions">
+          <app-icon-button
+            icon="edit"
+            label="Edit budget"
+            (click)="openEditDialog(budget, editDialog)"
+          />
+          <app-icon-button
+            icon="delete"
+            label="Delete budget"
+            (click)="openDeleteDialog(budget, deleteDialog)"
+          />
         </div>
       </div>
 
-      <div class="actions">
-        <app-icon-button
-          icon="edit"
-          label="Edit budget"
-          (click)="openEditDialog(budget, editDialog)"
-        />
-        <app-icon-button
-          icon="delete"
-          label="Delete budget"
-          (click)="openDeleteDialog(budget, deleteDialog)"
-        />
+      <div class="budget-amounts">
+        <span>
+          <span class="spent">{{ budget.spent | currency: 'EUR' : 'symbol' : '1.2-2' }}</span>
+          <span class="visually-hidden">spent out of</span>
+          <span aria-hidden="true"> / </span>
+          {{ budget.amount | currency: 'EUR' : 'symbol' : '1.2-2' }}
+        </span>
+        <span>{{ percent | number: '1.0-0' }}%</span>
       </div>
+
+      <div
+        class="progress"
+        role="progressbar"
+        [attr.aria-label]="budget.category.name + ' budget usage'"
+        [attr.aria-valuenow]="percent > 100 ? 100 : percent"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          class="progress-bar"
+          [class.is-over-budget]="percent > 100"
+          [style.width.%]="percent > 100 ? 100 : percent"
+        ></div>
+      </div>
+      @if (budget.spent > budget.amount) {
+        <p class="over-budget">
+          {{ budget.spent - budget.amount | currency: 'EUR' : 'symbol' : '1.2-2' }} over budget
+        </p>
+      }
     </div>
   }
 

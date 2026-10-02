@@ -5,7 +5,12 @@
   </header>
   @for (category of categories(); track category.id) {
     <div class="d-flex flex-row align-items-center justify-content-between">
-      <div>{{ category.name }} - {{ category.type }}</div>
+      <div class="category-details">
+        <span class="category-name" [title]="category.name">{{ category.name }}</span>
+        <app-label [tone]="category.type === categoryType.Expense ? 'danger' : 'success'">{{
+          category.type
+        }}</app-label>
+      </div>
       <div class="actions">
         <app-icon-button
           icon="edit"

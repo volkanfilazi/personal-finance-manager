@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal, viewChild } from '@angular/core';
+import { Component, computed, DestroyRef, inject, OnInit, signal, viewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Transaction, TransactionTotalsState } from '../transactions/transaction.model';
 import { CategoryList } from '../categories/category-list/category-list';
@@ -11,6 +11,7 @@ import { SpendingByCategory } from '../spending-by-category/spending-by-category
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize, Subscription } from 'rxjs';
 import { TextButton } from '../../shared/buttons/text-button/text-button';
+import { MIN_YEAR, MAX_YEAR } from '../../shared/validators/supported-date';
 
 @Component({
   standalone: true,
@@ -36,14 +37,22 @@ export class Dashboard implements OnInit {
   protected readonly categoriesLoading = signal(false);
   protected readonly categoriesError = signal('');
   protected readonly selectedDate = signal(new Date());
+  protected readonly canGoBack = computed(() =>
+    this.selectedDate().getFullYear() > MIN_YEAR || this.selectedDate().getMonth() > 0);
+  protected readonly canGoForward = computed(() =>
+    this.selectedDate().getFullYear() < MAX_YEAR || this.selectedDate().getMonth() < 11);
   protected readonly categories = signal<Category[]>([]);
   protected readonly transactions = signal<Transaction[]>([]);
   protected readonly totals = signal<TransactionTotalsState>({ status: 'loading' });
 
   protected changeMonth(offset: number): void {
+    const current = this.selectedDate();
+    const next = new Date(current.getFullYear(), current.getMonth() + offset, 1);
+    if (next.getFullYear() < MIN_YEAR || next.getFullYear() > MAX_YEAR) return;
+
     this.totals.set({ status: 'loading' });
     this.transactions.set([]);
-    this.selectedDate.update((date) => new Date(date.getFullYear(), date.getMonth() + offset, 1));
+    this.selectedDate.set(next);
   }
 
   categoryChanged() {

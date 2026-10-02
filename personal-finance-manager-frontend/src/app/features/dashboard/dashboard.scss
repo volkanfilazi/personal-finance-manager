@@ -21,6 +21,7 @@
 }
 
 .list-card {
+  position: relative;
   --card-padding: 20px;
   min-width: 0;
   min-height: 0;
@@ -46,7 +47,14 @@
 
 .budgets { grid-area: budgets; }
 .categories { grid-area: categories; }
-.spending { grid-area: spending; }
+.spending {
+  grid-area: spending;
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
+  }
+}
 
 .dashboard-header {
   display: flex;

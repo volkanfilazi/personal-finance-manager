@@ -24,13 +24,17 @@
       [inputId]="formId + '-month-year'"
       label="Year / Month"
       type="month"
+      [min]="minMonth"
+      [max]="maxMonth"
       [control]="form.controls.monthYear"
       [error]="
         !form.controls.monthYear.touched
           ? ''
           : form.controls.monthYear.hasError('required')
             ? 'Year - Month is required.'
-            : ''
+            : form.controls.monthYear.hasError('supportedDate')
+              ? 'Choose a valid month between 2000 and 2100.'
+              : ''
       "
     />
 

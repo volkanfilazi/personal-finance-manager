@@ -22,6 +22,7 @@ import { Input } from '../../../shared/form-elements/input/input';
 import { Select } from '../../../shared/form-elements/select/select';
 import { Textarea } from '../../../shared/form-elements/textarea/textarea';
 import { currencyPrecision } from '../../../shared/validators/currency-precision';
+import { MIN_DATE, MAX_DATE, supportedDate } from '../../../shared/validators/supported-date';
 
 let nextFormId = 0;
 @Component({
@@ -30,6 +31,8 @@ let nextFormId = 0;
   templateUrl: './transaction-form.html',
 })
 export class TransactionForm {
+  protected readonly minDate = MIN_DATE;
+  protected readonly maxDate = MAX_DATE;
   protected readonly formId = 'transaction-' + nextFormId++;
   private readonly fb = inject(FormBuilder);
   private readonly transactionService = inject(TransactionService);
@@ -41,18 +44,22 @@ export class TransactionForm {
 
   protected readonly form = this.fb.nonNullable.group({
     description: ['', [Validators.required, Validators.maxLength(200)]],
-    amount: this.fb.control<number | null>(null, [Validators.required, Validators.min(0.01), currencyPrecision]),
-    date: ['', [Validators.required]],
+    amount: this.fb.control<number | null>(null, [
+      Validators.required,
+      Validators.min(0.01),
+      currencyPrecision,
+    ]),
+    date: ['', [Validators.required, supportedDate]],
     categoryId: ['', Validators.required],
   });
 
   categories = input<Category[]>([]);
   protected readonly categoryOptions = computed(() => {
     const options = this.categories()
-      .filter(category => !category.isDeleted)
-      .map(category => ({ value: category.id, label: category.name, disabled: false }));
+      .filter((category) => !category.isDeleted)
+      .map((category) => ({ value: category.id, label: category.name, disabled: false }));
     const current = this.updateForm()?.category;
-    if (current && !options.some(option => option.value === current.id)) {
+    if (current && !options.some((option) => option.value === current.id)) {
       options.unshift({
         value: current.id,
         label: `${current.name} (${current.isDeleted ? 'deleted' : 'inactive'})`,
@@ -139,7 +146,12 @@ export class TransactionForm {
       next: () => this.saved.emit(),
       error: (error: HttpErrorResponse) => {
         const apiError = error.error as ApiError | null;
-        this.responseError.set(apiError?.message ?? 'Something went wrong. Please try again.');
+        const validationMessage = Object.values(apiError?.errors ?? {})
+          .flat()
+          .join(' ');
+        this.responseError.set(
+          apiError?.message || validationMessage || 'Something went wrong. Please try again.',
+        );
       },
     });
   }
