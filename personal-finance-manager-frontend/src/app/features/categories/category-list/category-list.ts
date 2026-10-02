@@ -33,6 +33,7 @@ export class CategoryList {
   protected readonly deleteDialog = viewChild.required<DeleteConfirmationDialog>('deleteDialog');
 
   readonly categories = input<Category[]>([]);
+  readonly showEmptyState = input(true);
   readonly categoriesChanged = output<void>();
   protected readonly selectedCategory = signal<Category | null>(null);
   protected readonly deleting = signal(false);
