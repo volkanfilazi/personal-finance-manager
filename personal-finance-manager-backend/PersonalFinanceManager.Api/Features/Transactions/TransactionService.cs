@@ -18,7 +18,7 @@ public class TransactionService
     public async Task<CreateTransactionResult> CreateAsync(Transaction transaction)
     {
         var category = await _categories
-            .Find(x => x.Id == transaction.CategoryId)
+            .Find(x => x.Id == transaction.CategoryId && !x.IsDeleted)
             .FirstOrDefaultAsync();
 
         if (category is null)
