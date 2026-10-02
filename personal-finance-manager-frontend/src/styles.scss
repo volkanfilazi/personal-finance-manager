@@ -1,5 +1,5 @@
 @use './styles/theme';
-@import 'bootstrap/dist/css/bootstrap.min.css';
+@use './styles/bootstrap';
 
 // Adapt the Bootstrap components used in this app to our palette.
 :root {

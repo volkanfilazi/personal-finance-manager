@@ -91,7 +91,7 @@ npm run build
 npm test -- --watch=false
 ```
 
-The frontend build is written to `dist/personal-finance-manager-frontend`. It currently exceeds the configured 500 kB warning threshold; this produces a warning rather than a build failure.
+The frontend build is written to `dist/personal-finance-manager-frontend`. The production initial bundle is approximately 466 kB, below the unchanged 500 kB warning threshold. Bootstrap styles are limited to the components used by the application in `src/styles/_bootstrap.scss`; layout utilities are retained. This reduces global CSS from approximately 235 kB to 109 kB. Bootstrap 5.3 uses Sass `@import`, so that specific deprecation warning is suppressed in `angular.json` until Bootstrap supports the Sass module system.
 
 From `personal-finance-manager-backend/PersonalFinanceManager.Api`:
 
